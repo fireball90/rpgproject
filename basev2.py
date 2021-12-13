@@ -19,8 +19,10 @@ gameMakers = tk.Frame(root, background="#BBBBBB", height=25)
 mapPlease = tk.Frame(gameMap, background="#666666", height=400)
 buttonFrame = tk.Frame(gameControl,background="#444444",width=180)
 statusFrame = tk.Frame(gameControl,background="#888888",width=420)
+enemyFrame = tk.Frame(gameMap, background="#BBBBBB", height=450)
 
 gameMap.add(mapPlease)
+gameMap.add(enemyFrame)
 gameControl.add(buttonFrame)
 gameControl.add(statusFrame)
 
@@ -39,13 +41,7 @@ label1.place(x=280, y=2)
 label2 = tk.Label(master=gameMakers, text="Copyright (c) Jancsurák Bence, Mészáros Balázs és Lekner Norbert 2021",bg="#BBBBBB", fg="Black")
 label2.place(x=115, y=2)
 
-#grid megjelenítése 
 
-for row in range(20):
-    for column in range(30):
-        f = tk.Frame(mapPlease, background="white",
-                     bd=1, relief="sunken",width=20, height=20)
-        f.grid(row=row, column=column)
 
 #háttér státusznak /canvas
 statusBG = tk.Canvas(statusFrame,width=460,height=250)
@@ -69,6 +65,17 @@ def clearFrame():
     
 def clearCanvas():
     statusBG.delete("all")
+
+#grid megjelenítése 
+def showMap():
+    clearFrame()
+    for row in range(11):
+        for column in range(11):
+            f = tk.Frame(mapPlease, background="white",
+                        bd=1, relief="sunken",width=20, height=20)
+            f.grid(row=row, column=column)
+
+
 
 def showbgpls():
     showBG = tk.Canvas(statusFrame,width=460,height=250)
@@ -132,7 +139,29 @@ def showInventory():
     healingItem = tk.Button(master=statusFrame, text="Healing item", font=("Arial", 16), bg="#888888",fg="Red")
     healingItem.place(x=170, y=60)
 
+def fightScreen():
+    clearFrame()
+    enemyBG = tk.Canvas(enemyFrame,width=600,height=450)
+    enemyBG.pack()
+    fightLabel = tk.Label(enemyFrame, text="Enemy encounter!", font=("Arial", 16), background="#BBBBBB", fg="red")
+    fightLabel.place(x=220,y=20)
+    img3 = ImageTk.PhotoImage(Image.open("images/statusbg.jpg"))
+    enemyBG.background = img3 
+    bg3 = enemyBG.create_image(0, 0, anchor=tk.NW, image=img3)
 
+    photo = tk.PhotoImage(file="images/zugzug.png")
+    enemyFrame.photo = photo
+    enemyBG.create_image(450, 80, image=photo, anchor=tk.NW)
+    fightText=tk.Text(enemyFrame)
+    fightText.place(x=20, y=70, width=400, height=300)
+
+#player=0
+#enemy=1  
+#if player == enemy:
+#    fightScreen()
+#else:
+#    showMap()
+fightScreen()
 
 #GOMBOK megjelenítése 
 
