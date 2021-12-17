@@ -86,6 +86,8 @@ def showbgpls():
     photoimage2 = ImageTk.PhotoImage(file="images/zugzug.png")
     showBG.create_image(220, 150, image=photoimage2)
 
+
+
 def showControl():
     clearFrame()
     showbgpls()
@@ -98,7 +100,7 @@ def showControl():
     moveForward.place(x=170, y=60)
     moveBackward = tk.Button(
         master=statusFrame, text="Backward", font=("Arial", 16), bg="#888888",fg="Red",
-        command = lambda:map.Update([0, 1])
+        command = lambda:[map.Update([0, 1])]
         )
     moveBackward.place(x=170, y=120)
     moveLeft = tk.Button(
@@ -264,7 +266,8 @@ class Map:
             self.player_actual_coord['y'] = player_new_y
 
         return level
-        
+
+
 
 map = Map()
 map.Loading('levels/first_level.txt')
