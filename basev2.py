@@ -5,6 +5,7 @@ from tkinter.constants import LEFT
 from typing import Text
 from PIL import Image, ImageTk
 import os
+from tkinter import filedialog
 
 
 root = tk.Tk()
@@ -56,6 +57,9 @@ statusBG.create_image(420, 150, image=photoimage)
 def bonusPlay():
     os.system('python bonusgame.py')
 
+def mapEditor():
+    os.system('python mapeditor.py')
+
 def endScreen():
     root.destroy()
     os.system('python ending.py')
@@ -76,7 +80,6 @@ def showMap():
     #                    bd=1, relief="sunken",width=20, height=20)
     #        f.grid(row=row, column=column)
 
-
 def showbgpls():
     showBG = tk.Canvas(statusFrame,width=460,height=250)
     showBG.pack()
@@ -86,6 +89,43 @@ def showbgpls():
     photoimage2 = ImageTk.PhotoImage(file="images/zugzug.png")
     showBG.create_image(220, 150, image=photoimage2)
 
+def mapSelection():
+    clearFrame()
+    showbgpls()
+    mapPath = Entry(statusFrame)
+    mapPath.pack(expand=True, fill=X, padx=10,pady=5)   
+
+    openMapButton = tk.Button(
+        master=statusFrame, text="Open map", font=("Arial", 14), bg="#888888",fg="Red",
+        command = openMap)
+    openMapButton.place(x=170,y=60)
+    
+    openPath = Entry(statusFrame)
+    openPath.place(x=100,y=30, width=260)
+
+    applyMapButton = tk.Button(
+        master=statusFrame, text="Use selected map", font=("Arial", 14), bg="#888888",fg="Red",
+        command = lambda:[callback])
+    applyMapButton.place(x=170,y=120)
+
+    openMapEditorButton = tk.Button(
+        master=statusFrame, text="Map editor", font=("Arial", 14), bg="#888888",fg="Red",
+        command = mapEditor)
+    openMapEditorButton.place(x=170,y=180)
+
+def openMap():
+    tf = filedialog.askopenfilename(
+        initialdir="/level", 
+        title="Open Text file", 
+        filetypes=(("Text Files", "*.txt"),)
+        )
+    openPath = Entry(statusFrame)
+    openPath.place(x=100,y=30, width=260)
+    openPath.insert(END, tf)
+    tf = open(tf)
+    file_cont = tf.read()
+    map.map_string.insert(END, file_cont)
+    tf.close()
 
 
 def showControl():
@@ -169,6 +209,11 @@ def fightScreen():
     fightText=tk.Text(enemyFrame)
     fightText.place(x=20, y=70, width=400, height=300)
 
+def callback():
+    global buttonClicked
+    buttonClicked = not buttonClicked
+    
+buttonClicked  = False
 
 class Tile:
     def __init__(self, hitbox, sprite, level = 0):
@@ -193,13 +238,15 @@ class Map:
         PhotoImage(file = 'sprites/player.gif').zoom(3)
     )
 
+
+
     def Loading(self, map_name):
             try:
                 with open(map_name, 'r', encoding = 'utf-8') as file:
                     for i in range(24):
                         map_string = file.readline()
                         self.map.append([])
-                        
+
                         for j in range(24):
                             if map_string[j] == '#':
                                 wall_vertical = Tile(True, self.sprites[0])
@@ -235,6 +282,7 @@ class Map:
 
                                 player_object = Tile(False, self.sprites[7])
                                 self.map[i].append(player_object)
+                
             except:
                 print('Hiba történt a pálya betöltése közben!')
     
@@ -324,21 +372,22 @@ exitButton = tk.Button(buttonFrame,
     command=endScreen
 )
 
-bonusButton = tk.Button(buttonFrame,
-    text="Bonus game",
+mapsButton = tk.Button(buttonFrame,
+    text="Map selection",
     width=20,
     height=2,
     bg="#555555",
     fg="yellow",
-    command=bonusPlay
+    command=mapSelection
 )
 
 controlMenu.pack()
 attackMenu.pack()
 statusMenu.pack()
 inventoryMenu.pack()
+mapsButton.pack()
 exitButton.pack()
-bonusButton.pack()
+
 
 
 
