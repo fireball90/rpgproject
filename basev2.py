@@ -6,22 +6,23 @@ from typing import Text
 from PIL import Image, ImageTk
 import os
 
-root = tk.Tk()
-root.geometry("600x700")
-root.resizable(False, False)
 
+root = tk.Tk()
+root.geometry("600x900")
+root.resizable(False, False)
+directory= os.path.dirname(__file__)
 #layout megjelenítése 
 
 gameName = tk.Frame(root, background="#111111", height=25)
-gameMap = tk.PanedWindow(root, background="#777777", height=400)
+gameMap = tk.PanedWindow(root, background="#777777", width=600, height=600)
 gameControl = tk.PanedWindow(root, background="#333333", height=250)
 gameMakers = tk.Frame(root, background="#BBBBBB", height=25)
-mapPlease = tk.Frame(gameMap, background="#666666", height=400)
+mapPlease = tk.Frame(gameMap, background="#666666", width=600, height=400)
 buttonFrame = tk.Frame(gameControl,background="#444444",width=180)
 statusFrame = tk.Frame(gameControl,background="#888888",width=420)
-enemyFrame = tk.Frame(gameMap, background="#BBBBBB", height=450)
+enemyFrame = tk.Frame(gameMap, background="#BBBBBB", height=400)
 
-gameMap.add(mapPlease)
+gameMap.add(mapPlease, width=600, height=600)
 gameMap.add(enemyFrame)
 gameControl.add(buttonFrame)
 gameControl.add(statusFrame)
@@ -69,12 +70,11 @@ def clearCanvas():
 #grid megjelenítése 
 def showMap():
     clearFrame()
-    for row in range(11):
-        for column in range(11):
-            f = tk.Frame(mapPlease, background="white",
-                        bd=1, relief="sunken",width=20, height=20)
-            f.grid(row=row, column=column)
-
+    #for row in range(11):
+    #    for column in range(11):
+    #        f = tk.Frame(mapPlease, background="white",
+    #                    bd=1, relief="sunken",width=20, height=20)
+    #        f.grid(row=row, column=column)
 
 
 def showbgpls():
@@ -91,13 +91,25 @@ def showControl():
     showbgpls()
     moveInfo = tk.Label(master=statusFrame, text="Moving options", font=("Arial", 20), bg="#888888", fg="Yellow")
     moveInfo.place(x=120, y=5)
-    moveForward = tk.Button(master=statusFrame, text="Forward", font=("Arial", 16), bg="#888888",fg="Red")
+    moveForward = tk.Button(
+        master=statusFrame, text="Forward", font=("Arial", 16), bg="#888888",fg="Red",
+        command = lambda:map.Update([0, -1])
+        )
     moveForward.place(x=170, y=60)
-    moveBackward = tk.Button(master=statusFrame, text="Backward", font=("Arial", 16), bg="#888888",fg="Red")
+    moveBackward = tk.Button(
+        master=statusFrame, text="Backward", font=("Arial", 16), bg="#888888",fg="Red",
+        command = lambda:map.Update([0, 1])
+        )
     moveBackward.place(x=170, y=120)
-    moveLeft = tk.Button(master=statusFrame, text="Left", font=("Arial", 16), bg="#888888",fg="Red")
+    moveLeft = tk.Button(
+        master=statusFrame, text="Left", font=("Arial", 16), bg="#888888",fg="Red",
+        command = lambda:map.Update([-1, 0])
+        )
     moveLeft.place(x=100, y=90)
-    moveRight = tk.Button(master=statusFrame, text="Right", font=("Arial", 16), bg="#888888",fg="Red")
+    moveRight = tk.Button(
+        master=statusFrame, text="Right", font=("Arial", 16), bg="#888888",fg="Red",
+        command = lambda:map.Update([1, 0])
+        )
     moveRight.place(x=290, y=90)
 
 def showAttack():
@@ -141,7 +153,7 @@ def showInventory():
 
 def fightScreen():
     clearFrame()
-    enemyBG = tk.Canvas(enemyFrame,width=600,height=450)
+    enemyBG = tk.Canvas(enemyFrame,width=600,height=600)
     enemyBG.pack()
     fightLabel = tk.Label(enemyFrame, text="Enemy encounter!", font=("Arial", 16), background="#BBBBBB", fg="red")
     fightLabel.place(x=220,y=20)
@@ -155,13 +167,111 @@ def fightScreen():
     fightText=tk.Text(enemyFrame)
     fightText.place(x=20, y=70, width=400, height=300)
 
-#player=0
-#enemy=1  
-#if player == enemy:
-#    fightScreen()
-#else:
-#    showMap()
-fightScreen()
+
+class Tile:
+    def __init__(self, hitbox, sprite, level = 0):
+        self.hitbox = hitbox
+        self.sprite = sprite
+        self.level = level
+
+class Map:
+    map = []
+    map_canvas = tk.Canvas(mapPlease,width = 576, height = 600)
+
+    player_actual_coord = {'x':0, 'y':0}
+
+    sprites = (
+        PhotoImage(file = 'sprites/side.gif').zoom(3),
+        PhotoImage(file = 'sprites/roof.gif').zoom(3),
+        PhotoImage(file = 'sprites/grass.gif').zoom(3),
+        PhotoImage(file = 'sprites/enemygreen.gif').zoom(3),
+        PhotoImage(file = 'sprites/enemyblue.gif').zoom(3),
+        PhotoImage(file = 'sprites/enemyred.gif').zoom(3),
+        PhotoImage(file = 'sprites/enemyboss.gif').zoom(3),
+        PhotoImage(file = 'sprites/player.gif').zoom(3)
+    )
+
+    def Loading(self, map_name):
+            try:
+                with open(map_name, 'r', encoding = 'utf-8') as file:
+                    for i in range(24):
+                        map_string = file.readline()
+                        self.map.append([])
+                        
+                        for j in range(24):
+                            if map_string[j] == '#':
+                                wall_vertical = Tile(True, self.sprites[0])
+                                self.map[i].append(wall_vertical)
+
+                            elif map_string[j] == '=':
+                                wall_horizontal = Tile(True, self.sprites[1])
+                                self.map[i].append(wall_horizontal)
+
+                            elif map_string[j] == '.':
+                                empty_field = Tile(False, self.sprites[2])
+                                self.map[i].append(empty_field)
+
+                            elif map_string[j] == '1':
+                                enemy_level_1 = Tile(False, self.sprites[3] , 1)
+                                self.map[i].append(enemy_level_1)
+
+                            elif map_string[j] == '2':
+                                enemy_level_2 = Tile(False, self.sprites[4] , 2)
+                                self.map[i].append(enemy_level_2)
+
+                            elif map_string[j] == '3':
+                                enemy_level_3 = Tile(False, self.sprites[5] , 3)
+                                self.map[i].append(enemy_level_3)
+
+                            elif map_string[j] == '4':
+                                enemy_level_4 = Tile(False, self.sprites[6] , 4)
+                                self.map[i].append(enemy_level_4)   
+
+                            elif map_string[j] == 'p':
+                                self.player_actual_coord['x'] = j 
+                                self.player_actual_coord['y'] = i 
+
+                                player_object = Tile(False, self.sprites[7])
+                                self.map[i].append(player_object)
+            except:
+                print('Hiba történt a pálya betöltése közben!')
+    
+    def Drawing(self):
+        self.map_canvas.pack(expand=True, fill="both", padx=9, pady=10)
+
+        for i in range(24):
+            for j in range(24):
+                self.map_canvas.create_image(j * 24, i * 24, image = self.map[i][j].sprite, anchor = NW)             
+
+    def Update(self, movement_direction):
+        player_new_x = self.player_actual_coord['x'] + movement_direction[0]
+        player_new_y = self.player_actual_coord['y'] + movement_direction[1]
+
+        level = self.map[player_new_y][player_new_x].level
+
+        if not self.map[player_new_y][player_new_x].hitbox:
+            self.map_canvas.delete('all')
+            
+            empty_field = Tile(False, self.sprites[2])
+            self.map[self.player_actual_coord['y']][self.player_actual_coord['x']] = empty_field
+
+            player_object = Tile(False, self.sprites[7])
+            self.map[player_new_y][player_new_x] = player_object
+
+            self.Drawing()
+
+            self.player_actual_coord['x'] = player_new_x
+            self.player_actual_coord['y'] = player_new_y
+
+        return level
+        
+
+map = Map()
+map.Loading('levels/first_level.txt')
+map.Drawing()
+
+
+#################################################################################
 
 #GOMBOK megjelenítése 
 

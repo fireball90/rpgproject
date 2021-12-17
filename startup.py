@@ -4,12 +4,15 @@ from tkinter import *
 from tkinter.constants import LEFT
 from typing import Text
 from PIL import Image, ImageTk
+import os
+
+directory= os.path.dirname(__file__)
 
 root = tk.Tk()
 root.geometry("600x700")
 root.resizable(False, False)
 
-splashArt = ImageTk.PhotoImage(Image.open("images/startup.gif"))
+splashArt = ImageTk.PhotoImage(Image.open(os.path.join(directory,"images/startup.gif")))
 
 splashScreen = Label(root,image=splashArt)
 splashScreen.place(x=0,y=0)

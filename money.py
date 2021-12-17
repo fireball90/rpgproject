@@ -5,10 +5,13 @@ from tkinter import font
 from tkinter.constants import LEFT
 from typing import Text
 from PIL import Image, ImageTk
+import os
 
 root = tk.Tk()
 root.geometry("600x400")
 root.resizable(False, False)
+
+directory= os.path.dirname(__file__)
 
 bankArt = ImageTk.PhotoImage(Image.open("images/money.gif"))
 moneyBG = Label(root,image=bankArt)
