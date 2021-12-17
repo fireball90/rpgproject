@@ -47,6 +47,7 @@ insidewallPlacement = Label(topFrame, text="Press \"=\"   to place inside walls.
 groundPlacement = Label(topFrame, text="Press \".\"   to place empty field.", bg="#111111", fg="yellow")
 playerPlacement = Label(topFrame, text="Press \"p\"   to place the player.", bg="#111111", fg="yellow")
 enemyPlacement = Label(topFrame, text="Press \"1,2,3,4\" to place different enemy types.", bg="#111111", fg="yellow")
+howMuchPlacement = Label(topFrame, text="Only use the editor size (24x24 characters)", bg="#111111", fg="red")
 
 howToDoIt.place(x=50,y=10)
 outerwallPlacement.place(x=50,y=40)
@@ -54,6 +55,7 @@ insidewallPlacement.place(x=50,y=60)
 groundPlacement.place(x=50,y=80)
 playerPlacement.place(x=50,y=100)
 enemyPlacement.place(x=50,y=120)
+howMuchPlacement.place(x=50,y=140)
 
 mapFrame = Frame(middleFrame)
 mapFrame.pack(pady=20)
