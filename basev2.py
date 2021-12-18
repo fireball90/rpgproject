@@ -6,7 +6,7 @@ from typing import Text
 from PIL import Image, ImageTk
 import os
 from tkinter import filedialog
-
+import sys
 
 root = tk.Tk()
 root.geometry("600x900")
@@ -89,6 +89,11 @@ def showbgpls():
     photoimage2 = ImageTk.PhotoImage(file="images/zugzug.png")
     showBG.create_image(220, 150, image=photoimage2)
 
+whateverNumber=0
+def whatever():
+    global whateverNumber
+    whateverNumber+=1
+
 def mapSelection():
     clearFrame()
     showbgpls()
@@ -105,7 +110,7 @@ def mapSelection():
 
     applyMapButton = tk.Button(
         master=statusFrame, text="Use selected map", font=("Arial", 14), bg="#888888",fg="Red",
-        command = lambda:[callback])
+        command = whatever)
     applyMapButton.place(x=170,y=120)
 
     openMapEditorButton = tk.Button(
@@ -113,20 +118,22 @@ def mapSelection():
         command = mapEditor)
     openMapEditorButton.place(x=170,y=180)
 
+
 def openMap():
     tf = filedialog.askopenfilename(
-        initialdir="/level", 
-        title="Open Text file", 
-        filetypes=(("Text Files", "*.txt"),)
-        )
+            initialdir="/levels", 
+            title="Open Text file", 
+            filetypes=(("Text Files", "*.txt"),)
+            )
+    global mapName, folderName
+    mapName = os.path.basename(tf)
+    folderName = os.path.basename(os.path.dirname(tf))
+    print(folderName+"/"+mapName)
     openPath = Entry(statusFrame)
     openPath.place(x=100,y=30, width=260)
     openPath.insert(END, tf)
-    tf = open(tf)
-    file_cont = tf.read()
-    map.map_string.insert(END, file_cont)
-    tf.close()
 
+    
 
 def showControl():
     clearFrame()
@@ -209,12 +216,6 @@ def fightScreen():
     fightText=tk.Text(enemyFrame)
     fightText.place(x=20, y=70, width=400, height=300)
 
-def callback():
-    global buttonClicked
-    buttonClicked = not buttonClicked
-    
-buttonClicked  = False
-
 class Tile:
     def __init__(self, hitbox, sprite, level = 0):
         self.hitbox = hitbox
@@ -239,8 +240,7 @@ class Map:
     )
 
 
-
-    def Loading(self, map_name):
+    def Loading(self):
             try:
                 with open(map_name, 'r', encoding = 'utf-8') as file:
                     for i in range(24):
@@ -285,7 +285,7 @@ class Map:
                 
             except:
                 print('Hiba történt a pálya betöltése közben!')
-    
+
     def Drawing(self):
         self.map_canvas.pack(expand=True, fill="both", padx=9, pady=10)
 
@@ -316,11 +316,8 @@ class Map:
         return level
 
 
-
-map = Map()
-map.Loading('levels/first_level.txt')
+map.Loading()
 map.Drawing()
-
 
 #################################################################################
 
