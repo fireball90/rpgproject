@@ -242,8 +242,8 @@ class Map:
         PhotoImage(file = 'sprites/roof2.gif').zoom(3),
         PhotoImage(file = 'sprites/roof3.gif').zoom(3),
         PhotoImage(file = 'sprites/tree1.gif').zoom(3),
-        PhotoImage(file = 'sprites/tree2.gif').zoom(3),
         PhotoImage(file = 'sprites/tree3.gif').zoom(3),
+        PhotoImage(file = 'sprites/tree2.gif').zoom(3),
         PhotoImage(file = 'sprites/star.gif').zoom(3),
         PhotoImage(file = 'sprites/bandage.gif').zoom(3),
         PhotoImage(file = 'sprites/chest.gif').zoom(3)
