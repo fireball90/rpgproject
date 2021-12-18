@@ -89,10 +89,6 @@ def showbgpls():
     photoimage2 = ImageTk.PhotoImage(file="images/zugzug.png")
     showBG.create_image(220, 150, image=photoimage2)
 
-whateverNumber=0
-def whatever():
-    global whateverNumber
-    whateverNumber+=1
 
 def mapSelection():
     clearFrame()
@@ -110,7 +106,7 @@ def mapSelection():
 
     applyMapButton = tk.Button(
         master=statusFrame, text="Use selected map", font=("Arial", 14), bg="#888888",fg="Red",
-        command = whatever)
+        command = clearFrame)
     applyMapButton.place(x=170,y=120)
 
     openMapEditorButton = tk.Button(
@@ -241,6 +237,7 @@ class Map:
 
 
     def Loading(self):
+            map_name="levels/first_level.txt"
             try:
                 with open(map_name, 'r', encoding = 'utf-8') as file:
                     for i in range(24):
@@ -315,7 +312,7 @@ class Map:
 
         return level
 
-
+map = Map()
 map.Loading()
 map.Drawing()
 
