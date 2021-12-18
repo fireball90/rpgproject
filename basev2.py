@@ -234,7 +234,19 @@ class Map:
         PhotoImage(file = 'sprites/enemyblue.gif').zoom(3),
         PhotoImage(file = 'sprites/enemyred.gif').zoom(3),
         PhotoImage(file = 'sprites/enemyboss.gif').zoom(3),
-        PhotoImage(file = 'sprites/player.gif').zoom(3)
+        PhotoImage(file = 'sprites/player.gif').zoom(3),
+        PhotoImage(file = 'sprites/sand.gif').zoom(3),
+        PhotoImage(file = 'sprites/snow.gif').zoom(3),
+        PhotoImage(file = 'sprites/side2.gif').zoom(3),
+        PhotoImage(file = 'sprites/side3.gif').zoom(3),
+        PhotoImage(file = 'sprites/roof2.gif').zoom(3),
+        PhotoImage(file = 'sprites/roof3.gif').zoom(3),
+        PhotoImage(file = 'sprites/tree1.gif').zoom(3),
+        PhotoImage(file = 'sprites/tree2.gif').zoom(3),
+        PhotoImage(file = 'sprites/tree3.gif').zoom(3),
+        PhotoImage(file = 'sprites/star.gif').zoom(3),
+        PhotoImage(file = 'sprites/bandage.gif').zoom(3),
+        PhotoImage(file = 'sprites/chest.gif').zoom(3)
     )
 
     def Loading(self, map_name):
@@ -281,6 +293,56 @@ class Map:
 
                                 player_object = Tile(False, self.sprites[7])
                                 self.map[i].append(player_object)
+                            
+                            elif map_string[j] == ',':
+                                sand_field = Tile(False, self.sprites[8])
+                                self.map[i].append(sand_field)
+
+                            elif map_string[j] == ':':
+                                snow_field = Tile(False, self.sprites[9])
+                                self.map[i].append(snow_field)
+                            
+                            elif map_string[j] == '+':
+                                wall_horizontal2 = Tile(True, self.sprites[10])
+                                self.map[i].append(wall_horizontal2)
+                            
+                            elif map_string[j] == '-':
+                                wall_horizontal3 = Tile(True, self.sprites[11])
+                                self.map[i].append(wall_horizontal3)
+                            
+                            elif map_string[j] == '/':
+                                wall_vertical2 = Tile(True, self.sprites[12])
+                                self.map[i].append(wall_vertical2)
+                            
+                            elif map_string[j] == '*':
+                                wall_vertical3 = Tile(True, self.sprites[13])
+                                self.map[i].append(wall_vertical3)
+                            
+                            elif map_string[j] == 'i':
+                                normal_tree = Tile(True, self.sprites[14])
+                                self.map[i].append(normal_tree)
+                            
+                            elif map_string[j] == 'o':
+                                snowy_tree = Tile(True, self.sprites[15])
+                                self.map[i].append(snowy_tree)
+
+                            elif map_string[j] == 'p':
+                                palm_tree = Tile(True, self.sprites[16])
+                                self.map[i].append(palm_tree)
+                            
+                            elif map_string[j] == '5':
+                                star_sprite = Tile(False, self.sprites[17] , 5)
+                                self.map[i].append(star_sprite)
+                            
+                            elif map_string[j] == '6':
+                                bandage_sprite = Tile(False, self.sprites[18] , 6)
+                                self.map[i].append(bandage_sprite)
+
+                            elif map_string[j] == '7':
+                                chest_sprite = Tile(False, self.sprites[19] , 7)
+                                self.map[i].append(chest_sprite)
+                        
+
                 
             except:
                 print('Hiba történt a pálya betöltése közben!')
