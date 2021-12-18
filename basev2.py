@@ -326,7 +326,7 @@ class Map:
                                 snowy_tree = Tile(True, self.sprites[15])
                                 self.map[i].append(snowy_tree)
 
-                            elif map_string[j] == 'p':
+                            elif map_string[j] == 'k':
                                 palm_tree = Tile(True, self.sprites[16])
                                 self.map[i].append(palm_tree)
                             
