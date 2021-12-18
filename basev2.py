@@ -7,6 +7,9 @@ from PIL import Image, ImageTk
 import os
 from tkinter import filedialog
 import sys
+import combat
+import enemy
+import random
 
 root = tk.Tk()
 root.geometry("600x900")
@@ -56,6 +59,9 @@ statusBG.create_image(420, 150, image=photoimage)
 
 def bonusPlay():
     os.system('python bonusgame.py')
+
+def combatPlay():
+    os.system('python combat_test.py')
 
 def mapEditor():
     os.system('python mapeditor.py')
@@ -109,8 +115,6 @@ def mapSelection():
         command = mapEditor)
     openMapEditorButton.place(x=170,y=180)
 
-
-
 mapName=""
 folderName=""
 
@@ -129,8 +133,6 @@ def openMap():
     
     buttonwhat= tk.Button(statusFrame, text="Use map",font=("Arial", 14), bg="#888888",fg="Red", command=lambda:[map.Loading(currentlyUsedMap),map.Drawing()])
     buttonwhat.place(x=170,y=120)
-    
-
 
 def showControl():
     clearFrame()
@@ -163,11 +165,11 @@ def showAttack():
     showbgpls()
     attackInfo = tk.Label(master=statusFrame, text="Attack options", font=("Arial", 20), bg="#888888", fg="Yellow")
     attackInfo.place(x=170, y=5)
-    basicAttack = tk.Button(master=statusFrame, text="Basic attack", font=("Arial", 16), bg="#888888",fg="Red")
+    basicAttack = tk.Button(master=statusFrame, text="Basic attack", font=("Arial", 16), bg="#888888",fg="Red", command=combat.playerAttack)
     basicAttack.place(x=170, y=60)
-    heavyAttack = tk.Button(master=statusFrame, text="Heavy attack", font=("Arial", 16), bg="#888888",fg="Red")
+    heavyAttack = tk.Button(master=statusFrame, text="Defend", font=("Arial", 16), bg="#888888",fg="Red",command=combat.playerDef)
     heavyAttack.place(x=170, y=120)
-    specialAttack = tk.Button(master=statusFrame, text="Special attack", font=("Arial", 16), bg="#888888",fg="Red")
+    specialAttack = tk.Button(master=statusFrame, text="Ultimate", font=("Arial", 16), bg="#888888",fg="Red", command=combat.playerUltimate)
     specialAttack.place(x=170, y=180)
 
 def showStatus():
@@ -197,21 +199,7 @@ def showInventory():
     healingItem = tk.Button(master=statusFrame, text="Healing item", font=("Arial", 16), bg="#888888",fg="Red")
     healingItem.place(x=170, y=60)
 
-def fightScreen():
-    clearFrame()
-    enemyBG = tk.Canvas(enemyFrame,width=600,height=600)
-    enemyBG.pack()
-    fightLabel = tk.Label(enemyFrame, text="Enemy encounter!", font=("Arial", 16), background="#BBBBBB", fg="red")
-    fightLabel.place(x=220,y=20)
-    img3 = ImageTk.PhotoImage(Image.open("images/statusbg.jpg"))
-    enemyBG.background = img3 
-    bg3 = enemyBG.create_image(0, 0, anchor=tk.NW, image=img3)
 
-    photo = tk.PhotoImage(file="images/zugzug.png")
-    enemyFrame.photo = photo
-    enemyBG.create_image(450, 80, image=photo, anchor=tk.NW)
-    fightText=tk.Text(enemyFrame)
-    fightText.place(x=20, y=70, width=400, height=300)
 
 class Tile:
     def __init__(self, hitbox, sprite, level = 0):
@@ -352,6 +340,7 @@ class Map:
                 self.map_canvas.create_image(j * 24, i * 24, image = self.map[i][j].sprite, anchor = NW)             
 
     def Update(self, movement_direction):
+
         player_new_x = self.player_actual_coord['x'] + movement_direction[0]
         player_new_y = self.player_actual_coord['y'] + movement_direction[1]
 
@@ -373,10 +362,26 @@ class Map:
 
         return level
 
+    def fightScreen(self):
+        map.map_canvas.delete('all')
+        enemyBG = tk.Canvas(enemyFrame,width=600,height=600)
+        enemyBG.pack()
+        fightLabel = tk.Label(enemyFrame, text="Enemy encounter!", font=("Arial", 16), background="#BBBBBB", fg="red")
+        fightLabel.place(x=220,y=20)
+        img3 = ImageTk.PhotoImage(Image.open("images/fightBG.gif"))
+        enemyBG.background = img3 
+        bg3 = enemyBG.create_image(0, 0, anchor=tk.NW, image=img3)
+
+        photo = tk.PhotoImage(file="images/zugzug.png")
+        enemyFrame.photo = photo
+        enemyBG.create_image(450, 80, image=photo, anchor=tk.NW)
+        fightText=tk.Text(enemyFrame)
+        fightText.place(x=20, y=70, width=400, height=500)
+        fightText.insert(END, combat)
+
 map = Map()
 map.Loading('levels/first_level.txt')
 map.Drawing()
-
 
 
 #################################################################################
@@ -418,7 +423,6 @@ inventoryMenu = tk.Button(buttonFrame,
     fg="yellow",
     command=showInventory
 )
-
 
 exitButton = tk.Button(buttonFrame,
     text="Exit",

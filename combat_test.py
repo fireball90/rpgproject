@@ -1,12 +1,15 @@
 import random
 import combat
 import enemy    
+import tkinter
+import tkinter as tk
 
 combatLog = 0
 playerHealth = 100
 damage = 10
 ultimateBar = 0
 enemy = enemy.basicEnemy()
+
 
 print(str(enemy))
 while 1:
@@ -31,3 +34,4 @@ while 1:
     elif enemy.health<=0:
         print("You win")
         break
+
