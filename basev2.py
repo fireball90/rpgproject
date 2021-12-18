@@ -106,7 +106,7 @@ def mapSelection():
 
     applyMapButton = tk.Button(
         master=statusFrame, text="Use selected map", font=("Arial", 14), bg="#888888",fg="Red",
-        command = clearFrame)
+        command = clicker)
     applyMapButton.place(x=170,y=120)
 
     openMapEditorButton = tk.Button(
@@ -129,6 +129,12 @@ def openMap():
     openPath.place(x=100,y=30, width=260)
     openPath.insert(END, tf)
 
+    
+
+whateverNumber=0
+def clicker():
+    global whateverNumber
+    whateverNumber=whateverNumber+1
     
 
 def showControl():
@@ -236,8 +242,13 @@ class Map:
     )
 
 
+
     def Loading(self):
-            map_name="levels/first_level.txt"
+            if whateverNumber==0:
+                map_name="levels/first_level.txt"
+            else:
+                openMap()
+                map_name=(folderName+"/"+mapName)
             try:
                 with open(map_name, 'r', encoding = 'utf-8') as file:
                     for i in range(24):
