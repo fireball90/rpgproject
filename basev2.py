@@ -104,16 +104,15 @@ def mapSelection():
     openPath = Entry(statusFrame)
     openPath.place(x=100,y=30, width=260)
 
-    applyMapButton = tk.Button(
-        master=statusFrame, text="Use selected map", font=("Arial", 14), bg="#888888",fg="Red",
-        command = clicker)
-    applyMapButton.place(x=170,y=120)
-
     openMapEditorButton = tk.Button(
         master=statusFrame, text="Map editor", font=("Arial", 14), bg="#888888",fg="Red",
         command = mapEditor)
     openMapEditorButton.place(x=170,y=180)
 
+
+
+mapName=""
+folderName=""
 
 def openMap():
     tf = filedialog.askopenfilename(
@@ -124,18 +123,15 @@ def openMap():
     global mapName, folderName
     mapName = os.path.basename(tf)
     folderName = os.path.basename(os.path.dirname(tf))
-    print(folderName+"/"+mapName)
+    currentlyUsedMap=(folderName+"/"+mapName)
     openPath = Entry(statusFrame)
     openPath.place(x=100,y=30, width=260)
     openPath.insert(END, tf)
-
+    
+    buttonwhat= tk.Button(statusFrame, text="Use map",font=("Arial", 14), bg="#888888",fg="Red", command=lambda:[map.Loading(currentlyUsedMap),map.Drawing()])
+    buttonwhat.place(x=170,y=120)
     
 
-whateverNumber=0
-def clicker():
-    global whateverNumber
-    whateverNumber=whateverNumber+1
-    
 
 def showControl():
     clearFrame()
@@ -241,16 +237,11 @@ class Map:
         PhotoImage(file = 'sprites/player.gif').zoom(3)
     )
 
-
-
-    def Loading(self):
-            if whateverNumber==0:
-                map_name="levels/first_level.txt"
-            else:
-                openMap()
-                map_name=(folderName+"/"+mapName)
+    def Loading(self, map_name):
             try:
                 with open(map_name, 'r', encoding = 'utf-8') as file:
+                    self.map_canvas.delete('all')
+                    self.map = []
                     for i in range(24):
                         map_string = file.readline()
                         self.map.append([])
@@ -324,8 +315,10 @@ class Map:
         return level
 
 map = Map()
-map.Loading()
+map.Loading('levels/first_level.txt')
 map.Drawing()
+
+
 
 #################################################################################
 
