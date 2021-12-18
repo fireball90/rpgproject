@@ -120,7 +120,6 @@ def openMap():
             title="Open Text file", 
             filetypes=(("Text Files", "*.txt"),)
             )
-    global mapName, folderName
     mapName = os.path.basename(tf)
     folderName = os.path.basename(os.path.dirname(tf))
     currentlyUsedMap=(folderName+"/"+mapName)
@@ -341,8 +340,6 @@ class Map:
                             elif map_string[j] == '7':
                                 chest_sprite = Tile(False, self.sprites[19] , 7)
                                 self.map[i].append(chest_sprite)
-                        
-
                 
             except:
                 print('Hiba történt a pálya betöltése közben!')
