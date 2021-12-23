@@ -10,7 +10,6 @@ damage = 10
 ultimateBar = 0
 enemy = enemy.basicEnemy()
 
-
 print(str(enemy))
 while 1:
     print("Enemy health: {}".format(enemy.health))
@@ -34,4 +33,6 @@ while 1:
     elif enemy.health<=0:
         print("You win")
         break
-
+    with open('battle.txt', 'a') as f:
+        f.writelines('\n')
+    
