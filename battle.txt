@@ -1,4 +1,49 @@
 
+enemyName=tk.Label(battleStatus, textvariable=str(enemy))
+enemyName.place(x=100,y=80)
+
+while 1:
+    enemyHP=tk.Label(battleStatus, textvariable="Enemy health: {}".format(enemy.health))
+    enemyHP.place(x=100,y=100)
+    playerHP=tk.Label(battleStatus, textvariable="Your health: {}".format(playerHealth))
+    playerHP.place(x=100,y=120)
+    ultimate=tk.Label(battleStatus, textvariable="Ultimate: {}%".format(ultimateBar))
+    enemyHP.place(x=100,y=120)
+    playerHealth, enemy.stunBool, combatLog = enemy.notRlyAI(playerHealth)
+    combatLabel=tk.Label(battleStatus, textvariable=combat.enemyAttackText(combatLog))
+    if playerHealth<=0:
+        clearLabel()
+        drawBattleBG()
+        loseLabel=tk.Label(battleStatus, textvariable="You lose")
+        loseLabel.place(x=200,y=150)
+        break
+    elif enemy.health<=0:
+        clearLabel()
+        drawBattleBG()
+        winLabel=tk.Label(battleStatus, textvariable="You win")
+        winLabel.place(x=200,y=150)
+        break
+    with open('battle.txt', 'a') as f:
+        f.writelines('\n')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
