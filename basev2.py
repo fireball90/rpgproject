@@ -60,8 +60,8 @@ statusBG.create_image(420, 150, image=photoimage)
 def bonusPlay():
     os.system('python bonusgame.py')
 
-def combatPlay():
-    os.system('python combat_test.py')
+def battlePlay():
+    os.system('python battle.py')
 
 def mapEditor():
     os.system('python mapeditor.py')
@@ -134,6 +134,13 @@ def openMap():
     buttonwhat= tk.Button(statusFrame, text="Use map",font=("Arial", 14), bg="#888888",fg="Red", command=lambda:[map.Loading(currentlyUsedMap),map.Drawing()])
     buttonwhat.place(x=170,y=120)
 
+def buttonClicked(coords):
+    level = map.Update(coords)
+
+    if level == 1:
+        battlePlay()
+
+
 def showControl():
     clearFrame()
     showbgpls()
@@ -141,22 +148,22 @@ def showControl():
     moveInfo.place(x=120, y=5)
     moveForward = tk.Button(
         master=statusFrame, text="Forward", font=("Arial", 16), bg="#888888",fg="Red",
-        command = lambda:map.Update([0, -1])
+        command = lambda:buttonClicked([0, -1])
         )
     moveForward.place(x=170, y=60)
     moveBackward = tk.Button(
         master=statusFrame, text="Backward", font=("Arial", 16), bg="#888888",fg="Red",
-        command = lambda:[map.Update([0, 1])]
+        command = lambda:buttonClicked([0, 1])
         )
     moveBackward.place(x=170, y=120)
     moveLeft = tk.Button(
         master=statusFrame, text="Left", font=("Arial", 16), bg="#888888",fg="Red",
-        command = lambda:map.Update([-1, 0])
+        command = lambda:buttonClicked([-1, 0])
         )
     moveLeft.place(x=100, y=90)
     moveRight = tk.Button(
         master=statusFrame, text="Right", font=("Arial", 16), bg="#888888",fg="Red",
-        command = lambda:map.Update([1, 0])
+        command = lambda:buttonClicked([1, 0])
         )
     moveRight.place(x=290, y=90)
 

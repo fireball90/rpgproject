@@ -4,24 +4,30 @@ from tkinter import *
 from tkinter.constants import LEFT
 from typing import Text
 from PIL import Image, ImageTk
-
-
+import os
+from tkinter import filedialog
+import sys
+import combat
+import enemy
+import random
 
 root = tk.Tk()
-root.geometry("600x700")
+root.geometry("600x900")
 root.resizable(False, False)
-
+directory= os.path.dirname(__file__)
 #layout megjelenítése 
 
 gameName = tk.Frame(root, background="#111111", height=25)
-gameMap = tk.PanedWindow(root, background="#777777", height=400)
+gameMap = tk.PanedWindow(root, background="#777777", width=600, height=600)
 gameControl = tk.PanedWindow(root, background="#333333", height=250)
 gameMakers = tk.Frame(root, background="#BBBBBB", height=25)
-mapPlease = tk.Frame(gameMap, background="#666666", height=400)
+mapPlease = tk.Frame(gameMap, background="#666666", width=600, height=400)
 buttonFrame = tk.Frame(gameControl,background="#444444",width=180)
 statusFrame = tk.Frame(gameControl,background="#888888",width=420)
+enemyFrame = tk.Frame(gameMap, background="#BBBBBB", height=400)
 
-gameMap.add(mapPlease)
+gameMap.add(mapPlease, width=600, height=600)
+gameMap.add(enemyFrame)
 gameControl.add(buttonFrame)
 gameControl.add(statusFrame)
 
@@ -40,14 +46,352 @@ label1.place(x=280, y=2)
 label2 = tk.Label(master=gameMakers, text="Copyright (c) Jancsurák Bence, Mészáros Balázs és Lekner Norbert 2021",bg="#BBBBBB", fg="Black")
 label2.place(x=115, y=2)
 
+
+
+#háttér státusznak /canvas
+statusBG = tk.Canvas(statusFrame,width=460,height=250)
+statusBG.pack()
+img = ImageTk.PhotoImage(Image.open("images/statusbg.jpg"))
+statusBG.background = img  # ha funkcióban lenne használva maradjon referencia
+bg = statusBG.create_image(0, 0, anchor=tk.NW, image=img)
+photoimage = ImageTk.PhotoImage(file="images/zugzug.png")
+statusBG.create_image(420, 150, image=photoimage)
+
+def bonusPlay():
+    os.system('python bonusgame.py')
+
+def battlePlay():
+    os.system('python battle.py')
+
+def mapEditor():
+    os.system('python mapeditor.py')
+
+def endScreen():
+    root.destroy()
+    os.system('python ending.py')
+
+def clearFrame():
+    for widget in statusFrame.winfo_children():
+       widget.destroy()   
+    
+def clearCanvas():
+    statusBG.delete("all")
+
 #grid megjelenítése 
+def showMap():
+    clearFrame()
+    #for row in range(11):
+    #    for column in range(11):
+    #        f = tk.Frame(mapPlease, background="white",
+    #                    bd=1, relief="sunken",width=20, height=20)
+    #        f.grid(row=row, column=column)
 
-for row in range(20):
-    for column in range(30):
-        f = tk.Frame(mapPlease, background="white",
-                     bd=1, relief="sunken",width=20, height=20)
-        f.grid(row=row, column=column)
+def showbgpls():
+    showBG = tk.Canvas(statusFrame,width=460,height=250)
+    showBG.pack()
+    img2 = ImageTk.PhotoImage(Image.open("images/statusbg.jpg"))
+    showBG.background = img2  # ha funkcióban lenne használva maradjon referencia
+    bg2 = showBG.create_image(0, 0, anchor=tk.NW, image=img2)
+    photoimage2 = ImageTk.PhotoImage(file="images/zugzug.png")
+    showBG.create_image(220, 150, image=photoimage2)
 
+
+def mapSelection():
+    clearFrame()
+    showbgpls()
+    mapPath = Entry(statusFrame)
+    mapPath.pack(expand=True, fill=X, padx=10,pady=5)   
+
+    openMapButton = tk.Button(
+        master=statusFrame, text="Open map", font=("Arial", 14), bg="#888888",fg="Red",
+        command = openMap)
+    openMapButton.place(x=170,y=60)
+    
+    openPath = Entry(statusFrame)
+    openPath.place(x=100,y=30, width=260)
+
+    openMapEditorButton = tk.Button(
+        master=statusFrame, text="Map editor", font=("Arial", 14), bg="#888888",fg="Red",
+        command = mapEditor)
+    openMapEditorButton.place(x=170,y=180)
+
+mapName=""
+folderName=""
+
+def openMap():
+    tf = filedialog.askopenfilename(
+            initialdir="/levels", 
+            title="Open Text file", 
+            filetypes=(("Text Files", "*.txt"),)
+            )
+    mapName = os.path.basename(tf)
+    folderName = os.path.basename(os.path.dirname(tf))
+    currentlyUsedMap=(folderName+"/"+mapName)
+    openPath = Entry(statusFrame)
+    openPath.place(x=100,y=30, width=260)
+    openPath.insert(END, tf)
+    
+    buttonwhat= tk.Button(statusFrame, text="Use map",font=("Arial", 14), bg="#888888",fg="Red", command=lambda:[map.Loading(currentlyUsedMap),map.Drawing()])
+    buttonwhat.place(x=170,y=120)
+
+def buttonClicked(coords):
+    level = map.Update(coords)
+
+    if level == 1:
+        battlePlay()
+
+
+def showControl():
+    clearFrame()
+    showbgpls()
+    moveInfo = tk.Label(master=statusFrame, text="Moving options", font=("Arial", 20), bg="#888888", fg="Yellow")
+    moveInfo.place(x=120, y=5)
+    moveForward = tk.Button(
+        master=statusFrame, text="Forward", font=("Arial", 16), bg="#888888",fg="Red",
+        command = lambda:buttonClicked([0, -1])
+        )
+    moveForward.place(x=170, y=60)
+    moveBackward = tk.Button(
+        master=statusFrame, text="Backward", font=("Arial", 16), bg="#888888",fg="Red",
+        command = lambda:buttonClicked([0, 1])
+        )
+    moveBackward.place(x=170, y=120)
+    moveLeft = tk.Button(
+        master=statusFrame, text="Left", font=("Arial", 16), bg="#888888",fg="Red",
+        command = lambda:buttonClicked([-1, 0])
+        )
+    moveLeft.place(x=100, y=90)
+    moveRight = tk.Button(
+        master=statusFrame, text="Right", font=("Arial", 16), bg="#888888",fg="Red",
+        command = lambda:buttonClicked([1, 0])
+        )
+    moveRight.place(x=290, y=90)
+
+def showAttack():
+    clearFrame()
+    showbgpls()
+    attackInfo = tk.Label(master=statusFrame, text="Attack options", font=("Arial", 20), bg="#888888", fg="Yellow")
+    attackInfo.place(x=170, y=5)
+    basicAttack = tk.Button(master=statusFrame, text="Basic attack", font=("Arial", 16), bg="#888888",fg="Red", command=combat.playerAttack)
+    basicAttack.place(x=170, y=60)
+    heavyAttack = tk.Button(master=statusFrame, text="Defend", font=("Arial", 16), bg="#888888",fg="Red",command=combat.playerDef)
+    heavyAttack.place(x=170, y=120)
+    specialAttack = tk.Button(master=statusFrame, text="Ultimate", font=("Arial", 16), bg="#888888",fg="Red", command=combat.playerUltimate)
+    specialAttack.place(x=170, y=180)
+
+def showStatus():
+    clearFrame()
+    showbgpls()
+    statusInfo = tk.Label(master=statusFrame, text="Status", font=("Arial", 20), bg="#888888", fg="Yellow")
+    statusInfo.place(x=170, y=5)
+
+    healthStatus = tk.Label(master=statusFrame, text="Health", font=("Arial", 20), bg="#888888", fg="Yellow")
+    healthStatus.place(x=50, y=60)
+
+    damageStatus = tk.Label(master=statusFrame, text="Damage", font=("Arial", 20), bg="#888888", fg="Yellow")
+    damageStatus.place(x=50, y=120)
+
+    healthEntry = tk.Entry(master=statusFrame)
+    healthEntry.insert(0,"Placeholder")
+    healthEntry.place(x=240, y=70)
+    damageEntry = tk.Entry(master=statusFrame)
+    damageEntry.insert(0,"Placeholder")
+    damageEntry.place(x=240, y=130)
+
+def showInventory():
+    clearFrame()
+    showbgpls()
+    inventoryInfo = tk.Label(master=statusFrame, text="Inventory", font=("Arial", 20), bg="#888888", fg="Yellow")
+    inventoryInfo.place(x=170, y=5)
+    healingItem = tk.Button(master=statusFrame, text="Healing item", font=("Arial", 16), bg="#888888",fg="Red")
+    healingItem.place(x=170, y=60)
+
+
+
+class Tile:
+    def __init__(self, hitbox, sprite, level = 0):
+        self.hitbox = hitbox
+        self.sprite = sprite
+        self.level = level
+
+class Map:
+    map = []
+    map_canvas = tk.Canvas(mapPlease,width = 576, height = 600)
+
+    player_actual_coord = {'x':0, 'y':0}
+
+    sprites = (
+        PhotoImage(file = 'sprites/side.gif').zoom(3),
+        PhotoImage(file = 'sprites/roof.gif').zoom(3),
+        PhotoImage(file = 'sprites/grass.gif').zoom(3),
+        PhotoImage(file = 'sprites/enemygreen.gif').zoom(3),
+        PhotoImage(file = 'sprites/enemyblue.gif').zoom(3),
+        PhotoImage(file = 'sprites/enemyred.gif').zoom(3),
+        PhotoImage(file = 'sprites/enemyboss.gif').zoom(3),
+        PhotoImage(file = 'sprites/player.gif').zoom(3),
+        PhotoImage(file = 'sprites/sand.gif').zoom(3),
+        PhotoImage(file = 'sprites/snow.gif').zoom(3),
+        PhotoImage(file = 'sprites/side2.gif').zoom(3),
+        PhotoImage(file = 'sprites/side3.gif').zoom(3),
+        PhotoImage(file = 'sprites/roof2.gif').zoom(3),
+        PhotoImage(file = 'sprites/roof3.gif').zoom(3),
+        PhotoImage(file = 'sprites/tree1.gif').zoom(3),
+        PhotoImage(file = 'sprites/tree3.gif').zoom(3),
+        PhotoImage(file = 'sprites/tree2.gif').zoom(3),
+        PhotoImage(file = 'sprites/star.gif').zoom(3),
+        PhotoImage(file = 'sprites/bandage.gif').zoom(3),
+        PhotoImage(file = 'sprites/chest.gif').zoom(3)
+    )
+
+    def Loading(self, map_name):
+            try:
+                with open(map_name, 'r', encoding = 'utf-8') as file:
+                    self.map_canvas.delete('all')
+                    self.map = []
+                    for i in range(24):
+                        map_string = file.readline()
+                        self.map.append([])
+
+                        for j in range(24):
+                            if map_string[j] == '#':
+                                wall_vertical = Tile(True, self.sprites[0])
+                                self.map[i].append(wall_vertical)
+
+                            elif map_string[j] == '=':
+                                wall_horizontal = Tile(True, self.sprites[1])
+                                self.map[i].append(wall_horizontal)
+
+                            elif map_string[j] == '.':
+                                empty_field = Tile(False, self.sprites[2])
+                                self.map[i].append(empty_field)
+
+                            elif map_string[j] == '1':
+                                enemy_level_1 = Tile(False, self.sprites[3] , 1)
+                                self.map[i].append(enemy_level_1)
+
+                            elif map_string[j] == '2':
+                                enemy_level_2 = Tile(False, self.sprites[4] , 2)
+                                self.map[i].append(enemy_level_2)
+
+                            elif map_string[j] == '3':
+                                enemy_level_3 = Tile(False, self.sprites[5] , 3)
+                                self.map[i].append(enemy_level_3)
+
+                            elif map_string[j] == '4':
+                                enemy_level_4 = Tile(False, self.sprites[6] , 4)
+                                self.map[i].append(enemy_level_4)   
+
+                            elif map_string[j] == 'p':
+                                self.player_actual_coord['x'] = j 
+                                self.player_actual_coord['y'] = i 
+
+                                player_object = Tile(False, self.sprites[7])
+                                self.map[i].append(player_object)
+                            
+                            elif map_string[j] == ',':
+                                sand_field = Tile(False, self.sprites[8])
+                                self.map[i].append(sand_field)
+
+                            elif map_string[j] == ':':
+                                snow_field = Tile(False, self.sprites[9])
+                                self.map[i].append(snow_field)
+                            
+                            elif map_string[j] == '+':
+                                wall_horizontal2 = Tile(True, self.sprites[10])
+                                self.map[i].append(wall_horizontal2)
+                            
+                            elif map_string[j] == '-':
+                                wall_horizontal3 = Tile(True, self.sprites[11])
+                                self.map[i].append(wall_horizontal3)
+                            
+                            elif map_string[j] == '/':
+                                wall_vertical2 = Tile(True, self.sprites[12])
+                                self.map[i].append(wall_vertical2)
+                            
+                            elif map_string[j] == '*':
+                                wall_vertical3 = Tile(True, self.sprites[13])
+                                self.map[i].append(wall_vertical3)
+                            
+                            elif map_string[j] == 'i':
+                                normal_tree = Tile(True, self.sprites[14])
+                                self.map[i].append(normal_tree)
+                            
+                            elif map_string[j] == 'o':
+                                snowy_tree = Tile(True, self.sprites[15])
+                                self.map[i].append(snowy_tree)
+
+                            elif map_string[j] == 'k':
+                                palm_tree = Tile(True, self.sprites[16])
+                                self.map[i].append(palm_tree)
+                            
+                            elif map_string[j] == '5':
+                                star_sprite = Tile(False, self.sprites[17] , 5)
+                                self.map[i].append(star_sprite)
+                            
+                            elif map_string[j] == '6':
+                                bandage_sprite = Tile(False, self.sprites[18] , 6)
+                                self.map[i].append(bandage_sprite)
+
+                            elif map_string[j] == '7':
+                                chest_sprite = Tile(False, self.sprites[19] , 7)
+                                self.map[i].append(chest_sprite)
+                
+            except:
+                print('Hiba történt a pálya betöltése közben!')
+
+    def Drawing(self):
+        self.map_canvas.pack(expand=True, fill="both", padx=9, pady=10)
+
+        for i in range(24):
+            for j in range(24):
+                self.map_canvas.create_image(j * 24, i * 24, image = self.map[i][j].sprite, anchor = NW)             
+
+    def Update(self, movement_direction):
+
+        player_new_x = self.player_actual_coord['x'] + movement_direction[0]
+        player_new_y = self.player_actual_coord['y'] + movement_direction[1]
+
+        level = self.map[player_new_y][player_new_x].level
+
+        if not self.map[player_new_y][player_new_x].hitbox:
+            self.map_canvas.delete('all')
+            
+            empty_field = Tile(False, self.sprites[2])
+            self.map[self.player_actual_coord['y']][self.player_actual_coord['x']] = empty_field
+
+            player_object = Tile(False, self.sprites[7])
+            self.map[player_new_y][player_new_x] = player_object
+
+            self.Drawing()
+
+            self.player_actual_coord['x'] = player_new_x
+            self.player_actual_coord['y'] = player_new_y
+
+        return level
+
+    def fightScreen(self):
+        map.map_canvas.delete('all')
+        enemyBG = tk.Canvas(enemyFrame,width=600,height=600)
+        enemyBG.pack()
+        fightLabel = tk.Label(enemyFrame, text="Enemy encounter!", font=("Arial", 16), background="#BBBBBB", fg="red")
+        fightLabel.place(x=220,y=20)
+        img3 = ImageTk.PhotoImage(Image.open("images/fightBG.gif"))
+        enemyBG.background = img3 
+        bg3 = enemyBG.create_image(0, 0, anchor=tk.NW, image=img3)
+
+        photo = tk.PhotoImage(file="images/zugzug.png")
+        enemyFrame.photo = photo
+        enemyBG.create_image(450, 80, image=photo, anchor=tk.NW)
+        fightText=tk.Text(enemyFrame)
+        fightText.place(x=20, y=70, width=400, height=500)
+        fightText.insert(END, combat)
+
+map = Map()
+map.Loading('levels/first_level.txt')
+map.Drawing()
+
+
+#################################################################################
 
 #GOMBOK megjelenítése 
 
@@ -57,6 +401,7 @@ controlMenu = tk.Button(buttonFrame,
     height=2,
     bg="#555555",
     fg="yellow",
+    command=showControl
 )
 
 attackMenu = tk.Button(buttonFrame,
@@ -65,6 +410,7 @@ attackMenu = tk.Button(buttonFrame,
     height=2,
     bg="#555555",
     fg="yellow",
+    command=showAttack
 )
 
 statusMenu = tk.Button(buttonFrame,
@@ -73,6 +419,7 @@ statusMenu = tk.Button(buttonFrame,
     height=2,
     bg="#555555",
     fg="yellow",
+    command=showStatus,
 )
 
 inventoryMenu = tk.Button(buttonFrame,
@@ -81,6 +428,7 @@ inventoryMenu = tk.Button(buttonFrame,
     height=2,
     bg="#555555",
     fg="yellow",
+    command=showInventory
 )
 
 exitButton = tk.Button(buttonFrame,
@@ -89,44 +437,24 @@ exitButton = tk.Button(buttonFrame,
     height=2,
     bg="#555555",
     fg="yellow",
-    command=quit
+    command=endScreen
+)
+
+mapsButton = tk.Button(buttonFrame,
+    text="Map selection",
+    width=20,
+    height=2,
+    bg="#555555",
+    fg="yellow",
+    command=mapSelection
 )
 
 controlMenu.pack()
 attackMenu.pack()
 statusMenu.pack()
 inventoryMenu.pack()
+mapsButton.pack()
 exitButton.pack()
-
-#háttér státusznak /canvas
-
-statusBG = tk.Canvas(statusFrame,width=460,height=250)
-statusBG.pack()
-img = ImageTk.PhotoImage(Image.open("images/statusbg.jpg"))
-statusBG.background = img  # ha funkcióban lenne használva maradjon referencia
-bg = statusBG.create_image(0, 0, anchor=tk.NW, image=img)
-photoimage = ImageTk.PhotoImage(file="images/zugzug.png")
-statusBG.create_image(420, 150, image=photoimage)
-
-#canvas szövegek és beírásos helyek
-
-statusInfo = tk.Label(master=statusBG, text="Status", font=("Arial", 20), bg="#888888", fg="Yellow")
-statusInfo.place(x=170, y=5)
-
-healthStatus = tk.Label(master=statusBG, text="Health", font=("Arial", 20), bg="#888888", fg="Yellow")
-healthStatus.place(x=50, y=60)
-
-damageStatus = tk.Label(master=statusBG, text="Damage", font=("Arial", 20), bg="#888888", fg="Yellow")
-damageStatus.place(x=50, y=120)
-
-healthEntry = tk.Entry(master=statusBG)
-healthEntry.insert(0,"Placeholder")
-healthEntry.place(x=240, y=70)
-damageEntry = tk.Entry(master=statusBG)
-damageEntry.insert(0,"Placeholder")
-damageEntry.place(x=240, y=130)
-
-
 
 
 
