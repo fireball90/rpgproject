@@ -22,6 +22,7 @@ def drawBattleBG():
     fightLabel = tk.Label(battleStatus, text="Enemy encounter!", font=("Arial", 16), background="#BBBBBB", fg="red")
     fightLabel.place(x=220,y=20)
 
+
 def clearLabel():
     attackBG.delete("all")
 
