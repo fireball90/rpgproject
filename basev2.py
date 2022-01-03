@@ -26,6 +26,7 @@ buttonFrame = tk.Frame(gameControl,background="#444444",width=180)
 statusFrame = tk.Frame(gameControl,background="#888888",width=420)
 enemyFrame = tk.Frame(gameMap, background="#BBBBBB", height=400)
 
+
 gameMap.add(mapPlease, width=600, height=600)
 gameMap.add(enemyFrame)
 gameControl.add(buttonFrame)
@@ -46,7 +47,23 @@ label1.place(x=280, y=2)
 label2 = tk.Label(master=gameMakers, text="Copyright (c) Jancsurák Bence, Mészáros Balázs és Lekner Norbert 2021",bg="#BBBBBB", fg="Black")
 label2.place(x=115, y=2)
 
+#gombok
 
+btnImage=tk.PhotoImage(file="images/buttonbg2.gif")
+btnImage2=tk.PhotoImage(file="images/buttonbg.gif")
+btnControl=tk.PhotoImage(file="images/buttoncontrol.gif")
+btnInventory=tk.PhotoImage(file="images/buttoninventory.gif")
+btnStatus=tk.PhotoImage(file="images/buttonstatus.gif")
+btnExit=tk.PhotoImage(file="images/buttonexit.gif")
+btnMapEditor=tk.PhotoImage(file="images/buttonmapedit.gif")
+btnOpenMap=tk.PhotoImage(file="images/buttonopenmap.gif")
+btnLoadMap=tk.PhotoImage(file="images/buttonloadmap.gif")
+btnEditMap=tk.PhotoImage(file="images/buttonmapedit2.gif")
+btnBandage=tk.PhotoImage(file="images/buttonbandage.gif")
+btnForward=tk.PhotoImage(file="images/buttonforward.gif")
+btnBackward=tk.PhotoImage(file="images/buttonbackward.gif")
+btnLeft=tk.PhotoImage(file="images/buttonleft.gif")
+btnRight=tk.PhotoImage(file="images/buttonright.gif")
 
 #háttér státusznak /canvas
 statusBG = tk.Canvas(statusFrame,width=460,height=250)
@@ -103,7 +120,7 @@ def mapSelection():
     mapPath.pack(expand=True, fill=X, padx=10,pady=5)   
 
     openMapButton = tk.Button(
-        master=statusFrame, text="Open map", font=("Arial", 14), bg="#888888",fg="Red",
+        master=statusFrame,image=btnOpenMap, text="Open map", font=("Arial", 14),border="0", bg="black",fg="Red",
         command = openMap)
     openMapButton.place(x=170,y=60)
     
@@ -111,7 +128,7 @@ def mapSelection():
     openPath.place(x=100,y=30, width=260)
 
     openMapEditorButton = tk.Button(
-        master=statusFrame, text="Map editor", font=("Arial", 14), bg="#888888",fg="Red",
+        master=statusFrame,image=btnEditMap, text="Map editor", font=("Arial", 14),border="0", bg="black",fg="Red",
         command = mapEditor)
     openMapEditorButton.place(x=170,y=180)
 
@@ -131,34 +148,34 @@ def openMap():
     openPath.place(x=100,y=30, width=260)
     openPath.insert(END, tf)
     
-    buttonwhat= tk.Button(statusFrame, text="Use map",font=("Arial", 14), bg="#888888",fg="Red", command=lambda:[map.Loading(currentlyUsedMap),map.Drawing()])
+    buttonwhat= tk.Button(statusFrame,image=btnLoadMap, text="Use map",font=("Arial", 14),border="0", bg="black",fg="Red", command=lambda:[map.Loading(currentlyUsedMap),map.Drawing()])
     buttonwhat.place(x=170,y=120)
 
 def showControl():
     clearFrame()
     showbgpls()
-    moveInfo = tk.Label(master=statusFrame, text="Moving options", font=("Arial", 20), bg="#888888", fg="Yellow")
-    moveInfo.place(x=120, y=5)
+    moveInfo = tk.Label(master=statusFrame, text="Moving options", font=("Arial", 20), bg="black", fg="Yellow")
+    moveInfo.place(x=115, y=10)
     moveForward = tk.Button(
-        master=statusFrame, text="Forward", font=("Arial", 16), bg="#888888",fg="Red",
+        master=statusFrame,image=btnForward, text="Forward", font=("Arial", 16), bg="black",fg="Red",border="0",
         command = lambda:map.Update([0, -1])
         )
     moveForward.place(x=170, y=60)
     moveBackward = tk.Button(
-        master=statusFrame, text="Backward", font=("Arial", 16), bg="#888888",fg="Red",
+        master=statusFrame,image=btnBackward, text="Backward", font=("Arial", 16), bg="black",fg="Red",border="0",
         command = lambda:[map.Update([0, 1])]
         )
-    moveBackward.place(x=170, y=120)
+    moveBackward.place(x=170, y=150)
     moveLeft = tk.Button(
-        master=statusFrame, text="Left", font=("Arial", 16), bg="#888888",fg="Red",
+        master=statusFrame,image=btnLeft, text="Left", font=("Arial", 16), bg="black",fg="Red", border="0",
         command = lambda:map.Update([-1, 0])
         )
-    moveLeft.place(x=100, y=90)
+    moveLeft.place(x=80, y=100)
     moveRight = tk.Button(
-        master=statusFrame, text="Right", font=("Arial", 16), bg="#888888",fg="Red",
+        master=statusFrame,image=btnRight, text="Right", font=("Arial", 16), bg="black",fg="Red",border="0",
         command = lambda:map.Update([1, 0])
         )
-    moveRight.place(x=290, y=90)
+    moveRight.place(x=260, y=100)
 
 def showAttack():
     clearFrame()
@@ -196,7 +213,7 @@ def showInventory():
     showbgpls()
     inventoryInfo = tk.Label(master=statusFrame, text="Inventory", font=("Arial", 20), bg="#888888", fg="Yellow")
     inventoryInfo.place(x=170, y=5)
-    healingItem = tk.Button(master=statusFrame, text="Healing item", font=("Arial", 16), bg="#888888",fg="Red")
+    healingItem = tk.Button(master=statusFrame, image=btnBandage, text="Healing item", font=("Arial", 16),border="0", bg="black",fg="Red")
     healingItem.place(x=170, y=60)
 
 
@@ -388,62 +405,75 @@ map.Drawing()
 
 #GOMBOK megjelenítése 
 
+
+
 controlMenu = tk.Button(buttonFrame,
+    image=btnControl,
     text="Control",
-    width=20,
-    height=2,
-    bg="#555555",
-    fg="yellow",
+    border="0",
+    width=130,
+    height=41,
+    bg="#444444",
+    fg="black",
     command=showControl
 )
 
 attackMenu = tk.Button(buttonFrame,
+    image=btnImage,
     text="Attack",
-    width=20,
-    height=2,
-    bg="#555555",
-    fg="yellow",
+    width=130,
+    height=41,
+    bg="black",
+    fg="black",
     command=showAttack
 )
 
 statusMenu = tk.Button(buttonFrame,
+    image=btnStatus,
     text="Status",
-    width=20,
-    height=2,
-    bg="#555555",
-    fg="yellow",
+    border="0",
+    width=130,
+    height=41,
+    bg="#444444",
+    fg="black",
     command=showStatus,
 )
 
 inventoryMenu = tk.Button(buttonFrame,
+     image=btnInventory,
     text="Inventory",
-    width=20,
-    height=2,
-    bg="#555555",
-    fg="yellow",
+    border="0",
+    width=130,
+    height=41,
+    bg="#444444",
+    fg="black",
     command=showInventory
 )
 
 exitButton = tk.Button(buttonFrame,
+    image=btnExit,
     text="Exit",
-    width=20,
-    height=2,
-    bg="#555555",
-    fg="yellow",
+    border="0",
+    width=130,
+    height=41,
+    bg="#444444",
+    fg="black",
     command=endScreen
 )
 
 mapsButton = tk.Button(buttonFrame,
-    text="Map selection",
-    width=20,
-    height=2,
-    bg="#555555",
-    fg="yellow",
+    image=btnMapEditor,
+    border="0",
+    text="",
+    width=130,
+    height=41,
+    bg="#444444",
+    fg="black",
     command=mapSelection
 )
 
 controlMenu.pack()
-attackMenu.pack()
+#attackMenu.pack()
 statusMenu.pack()
 inventoryMenu.pack()
 mapsButton.pack()

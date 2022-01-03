@@ -74,14 +74,23 @@ img4 = ImageTk.PhotoImage(file="images/statusbg.jpg")
 attackBG2.background = img4
 bg = attackBG2.create_image(0, 0, anchor=tk.NW, image=img4)
 
-attackBTN=tk.Button(battleControl, text="Attack", fg="Yellow", bg="#555555", font=("Arial",20), command=attackBtn)
+testvar = 'elso szoveg'
+
+def update():
+    global testvar
+    testvar = 'masodik szoveg'
+
+    fightLabel = tk.Label(battleStatus, text=testvar, font=("Arial", 16), background="#BBBBBB", fg="red")
+    fightLabel.place(x=220,y=20)
+
+attackBTN=tk.Button(battleControl, text="Attack", fg="Yellow", bg="#555555", font=("Arial",20), command=update)
 attackBTN.place(x=40,y=100)
 defendBTN=tk.Button(battleControl, text="Defend", fg="Yellow", bg="#555555", font=("Arial",20), command=defenseBtn)
 defendBTN.place(x=230,y=100)
 ultimateBTN=tk.Button(battleControl, text="Ultimate", fg="Yellow", bg="#555555", font=("Arial",20), command=ultimateBtn)
 ultimateBTN.place(x=430,y=100)
 
-fightLabel = tk.Label(battleStatus, text="Enemy encounter!", font=("Arial", 16), background="#BBBBBB", fg="red")
+fightLabel = tk.Label(battleStatus, text=testvar, font=("Arial", 16), background="#BBBBBB", fg="red")
 fightLabel.place(x=220,y=20)
 
 combatLog = 0
