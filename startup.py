@@ -20,7 +20,7 @@ splashScreen.place(x=0,y=0)
 
 
 playGame = Button(root, text="PLAY THE GAME", font=("Arial",30), fg="White", bg="Green",command=root.destroy)
-playGame.place(x=120,y=400)
+playGame.place(x=120,y=570)
 
 root.mainloop()
 

@@ -40,6 +40,12 @@ def ultimateBtn():
     ultimateLabel=tk.Label(battleStatus, textvariable=combat.playerAttackText(combatLog))
     ultimateLabel.place(x=200,y=320)
 
+#gombok
+
+btnAttack=tk.PhotoImage(file="images/buttonattack.gif")
+btnDefend=tk.PhotoImage(file="images/buttondefend.gif")
+btnUltimate=tk.PhotoImage(file="images/buttonultimate.gif")
+
 
 battleName = tk.Frame(root, background="#111111", height=25)
 battleStatus = tk.PanedWindow(root, background="#111111", width=600, height=600)
@@ -70,7 +76,7 @@ bg = attackBG.create_image(0, 0, anchor=tk.NW, image=img5)
 
 attackBG2 = tk.Canvas(battleControl,width=600,height=250, bg="#444444")
 attackBG2.pack()
-img4 = ImageTk.PhotoImage(file="images/statusbg.jpg")
+img4 = ImageTk.PhotoImage(file="images/combatbg.gif")
 attackBG2.background = img4
 bg = attackBG2.create_image(0, 0, anchor=tk.NW, image=img4)
 
@@ -83,11 +89,11 @@ def update():
     fightLabel = tk.Label(battleStatus, text=testvar, font=("Arial", 16), background="#BBBBBB", fg="red")
     fightLabel.place(x=220,y=20)
 
-attackBTN=tk.Button(battleControl, text="Attack", fg="Yellow", bg="#555555", font=("Arial",20), command=update)
+attackBTN=tk.Button(battleControl,border="0",image=btnAttack, text="Attack", fg="Yellow", bg="#555555", font=("Arial",20), command=update)
 attackBTN.place(x=40,y=100)
-defendBTN=tk.Button(battleControl, text="Defend", fg="Yellow", bg="#555555", font=("Arial",20), command=defenseBtn)
+defendBTN=tk.Button(battleControl,border="0",image=btnDefend, text="Defend", fg="Yellow", bg="#555555", font=("Arial",20), command=defenseBtn)
 defendBTN.place(x=230,y=100)
-ultimateBTN=tk.Button(battleControl, text="Ultimate", fg="Yellow", bg="#555555", font=("Arial",20), command=ultimateBtn)
+ultimateBTN=tk.Button(battleControl,border="0",image=btnUltimate, text="Ultimate", fg="Yellow", bg="#555555", font=("Arial",20), command=ultimateBtn)
 ultimateBTN.place(x=430,y=100)
 
 fightLabel = tk.Label(battleStatus, text=testvar, font=("Arial", 16), background="#BBBBBB", fg="red")
