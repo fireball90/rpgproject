@@ -380,7 +380,7 @@ class Map:
 
         if not self.map_tiles[player_new_y][player_new_x].hitbox:
             if self.map_objects[player_new_y][player_new_x] != 'empty':
-                level = self.map_objects[player_new_y][player_new_x].tag
+                tag = self.map_objects[player_new_y][player_new_x].tag
             
             self.map_objects[self.player_coords[0]][self.player_coords[1]] = 'empty'
             self.map_objects[player_new_y][player_new_x] = Object(self.sprites[16], 5)
