@@ -136,7 +136,7 @@ folderName=""
 
 def openMap():
     tf = filedialog.askopenfilename(
-            initialdir="/levels", 
+            initialdir="/maps", 
             title="Open Text file", 
             filetypes=(("Text Files", "*.txt"),)
             )
@@ -165,22 +165,22 @@ def showControl():
     moveInfo.place(x=115, y=10)
     moveForward = tk.Button(
         master=statusFrame, text="Forward", font=("Arial", 16), bg="black",fg="Red",image=btnForward ,border="0",
-        command = lambda:buttonClicked([-1, 0])
+        command = lambda:buttonClicked(-1, 0)
         )
     moveForward.place(x=170, y=60)
     moveBackward = tk.Button(
         master=statusFrame, text="Backward", font=("Arial", 16), bg="black",fg="Red",image=btnBackward ,border="0",
-        command = lambda:buttonClicked([1, 0])
+        command = lambda:buttonClicked(1, 0)
         )
     moveBackward.place(x=170, y=150)
     moveLeft = tk.Button(
         master=statusFrame, text="Left", font=("Arial", 16), bg="black",fg="Red",image=btnLeft ,border="0",
-        command = lambda:buttonClicked([0, -1])
+        command = lambda:buttonClicked(0, -1)
         )
     moveLeft.place(x=80, y=100)
     moveRight = tk.Button(
         master=statusFrame, text="Right", font=("Arial", 16), bg="black",fg="Red",image=btnRight ,border="0",
-        command = lambda:buttonClicked([0, 1])
+        command = lambda:buttonClicked(0, 1)
         )
     moveRight.place(x=260, y=100)
 
@@ -231,11 +231,11 @@ class Tile:
 
 
 #Az objektumok külön koordinátát kaptak, hogy ne kelljen 24*24-es listában tárolni őket a poziciójuk eléréséhez
+
 class Tile:
     def __init__(self, sprite, hitbox = False):
         self.sprite = sprite
         self.hitbox = hitbox
-
 
 class Player:
     def __init__(self, sprite, x_coord, y_coord):
@@ -300,10 +300,8 @@ class EnemyGreen:
         self.health = 120
         self.hitbox = True
 
-    step_direction_x = 1
-
     def NextStep(self, map_tiles, map_objects, player_object):
-        pass    
+        pass
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -474,23 +472,6 @@ class Map:
         self.Drawing()
         map.map_canvas.after(1000, self.Update)
 
-    def fightScreen(self):
-        map.map_canvas.delete('all')
-        enemyBG = tk.Canvas(enemyFrame,width=600,height=600)
-        enemyBG.pack()
-        fightLabel = tk.Label(enemyFrame, text="Enemy encounter!", font=("Arial", 16), background="#BBBBBB", fg="red")
-        fightLabel.place(x=220,y=20)
-        img3 = ImageTk.PhotoImage(Image.open("images/fightBG.gif"))
-        enemyBG.background = img3 
-        bg3 = enemyBG.create_image(0, 0, anchor=tk.NW, image=img3)
-
-        photo = tk.PhotoImage(file="images/zugzug.png")
-        enemyFrame.photo = photo
-        enemyBG.create_image(450, 80, image=photo, anchor=tk.NW)
-        fightText=tk.Text(enemyFrame)
-        fightText.place(x=20, y=70, width=400, height=500)
-        fightText.insert(END, combat)
-
 map = Map()
 map.Loading('maps/first_level.txt')
 map.Drawing()
@@ -499,7 +480,6 @@ map.Update()
 def buttonClicked(direction_x, direction_y):
     map.player_object.NextStep(direction_x, direction_y, map.map_tiles, map.map_objects)
     map.Drawing()
-
 
 #################################################################################
 
