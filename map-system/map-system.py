@@ -8,49 +8,144 @@ class Tile:
         self.sprite = sprite
         self.hitbox = hitbox
 
-class Object:
-    def __init__(self, sprite, tag):
+class Player:
+    def __init__(self, sprite, x_coord, y_coord):
         self.sprite = sprite
-        self.tag = tag
+        self.x_coord = x_coord
+        self.y_coord = y_coord
+        self.name = 'Player'
+        self.damage = -200
+        self.health = 100
+        self.hitbox = False
 
-class EnemyLevel1:
-    def __init__(self, sprite, tag):
+    def NextStep(self, direction_x, direction_y, map_tiles, map_objects):
+        new_x = self.x_coord + direction_x
+        new_y = self.y_coord + direction_y
+
+        if map_tiles[new_x][new_y].hitbox == False:
+            self.x_coord = new_x
+            self.y_coord = new_y
+        
+        for object in map_objects:
+            if object.x_coord == self.x_coord and object.y_coord == self.y_coord:
+                object.UpdateHealth(self.damage)
+
+    def UpdateHealth(self, update_value):
+        self.health += update_value
+
+class EnemyBlue:
+    def __init__(self, sprite, x_coord, y_coord):
         self.sprite = sprite
-        self.tag = tag
+        self.x_coord = x_coord
+        self.y_coord = y_coord
+        self.name = 'EnemyBlue'
+        self.damage = 0
+        self.health = 100
+        self.hitbox = True
 
     step_direction_x = 1
 
-    def nextStep(self, actual_coords, map_tiles, map_objects):
-        new_coords = [actual_coords[0], actual_coords[1] + self.step_direction_x]
-
-        if map_tiles[new_coords[0]][new_coords[1]].hitbox or map_objects[new_coords[0]][new_coords[1]].tag != 'empty':
+    def NextStep(self, map_tiles, map_objects, player_object):
+        if map_tiles[self.x_coord + self.step_direction_x][self.y_coord].hitbox:
             self.step_direction_x = -self.step_direction_x
-            new_coords = [actual_coords[0], actual_coords[1] + self.step_direction_x]
+        
+        for object in map_objects:
+            if object.x_coord == self.x_coord + self.step_direction_x and object.y_coord == self.y_coord and object.hitbox:
+                self.step_direction_x = -self.step_direction_x
+        
+        self.x_coord += self.step_direction_x
 
-        return new_coords
+        if player_object.x_coord == self.x_coord and player_object.y_coord == self.y_coord:
+            self.UpdateHealth(player_object.damage)
 
-class EnemyLevel2:
-    def __init__(self, sprite, tag):
+    def UpdateHealth(self, update_value):
+        self.health += update_value
+
+class EnemyGreen:
+    def __init__(self, sprite, x_coord, y_coord):
         self.sprite = sprite
-        self.tag = tag
+        self.x_coord = x_coord
+        self.y_coord = y_coord
+        self.name = 'EnemyGreen'
+        self.damage = 0
+        self.health = 120
+        self.hitbox = True
 
-    step_direction_y = 1
+    def NextStep(self, map_tiles, map_objects, player_object):
+        pass
 
-    def nextStep(self, actual_coords, map_tiles, map_objects):
-        new_coords = [actual_coords[0] + self.step_direction_y, actual_coords[1]]
+    def UpdateHealth(self, update_value):
+        self.health += update_value
 
-        if map_tiles[new_coords[0]][new_coords[1]].hitbox or map_objects[new_coords[0]][new_coords[1]].tag != 'empty':
-            self.step_direction_y = -self.step_direction_y
-            new_coords = [actual_coords[0] + self.step_direction_y, actual_coords[1]]
-            
-        return new_coords
+class EnemyRed:
+    def __init__(self, sprite, x_coord, y_coord):
+        self.sprite = sprite
+        self.x_coord = x_coord
+        self.y_coord = y_coord
+        self.name = 'EnemyRed'
+        self.damage = 0
+        self.health = 140
+        self.hitbox = True
+
+    def NextStep(self, map_tiles, map_objects, player_object):
+        pass
+
+    def UpdateHealth(self, update_value):
+        self.health += update_value
+
+class EnemyBoss:
+    def __init__(self, sprite, x_coord, y_coord):
+        self.sprite = sprite
+        self.x_coord = x_coord
+        self.y_coord = y_coord
+        self.name = 'EnemyBoss'
+        self.damage = 0
+        self.health = 100
+        self.hitbox = True
+
+    def NextStep(self, map_tiles, map_objects, player_object):
+        pass
+
+    def UpdateHealth(self, update_value):
+        self.health += update_value
+
+class Fire:
+    def __init__(self, sprite, x_coord, y_coord):
+        self.sprite = sprite
+        self.x_coord = x_coord
+        self.y_coord = y_coord
+        self.name = 'Fire'
+        self.damage = -60
+        self.health = 100
+        self.hitbox = True
+
+    def NextStep(self, map_tiles, map_objects, player_object):
+        pass
+
+    def UpdateHealth(self, update_value):
+        self.health += update_value
+
+class Bandage:
+    def __init__(self, sprite, x_coord, y_coord):
+        self.sprite = sprite
+        self.x_coord = x_coord
+        self.y_coord = y_coord
+        self.name = 'Bandage'
+        self.damage = 40
+        self.health = 100
+        self.hitbox = True
+
+    def NextStep(self, map_tiles, map_objects, player_object):
+        pass
+
+    def UpdateHealth(self, update_value):
+        self.health += update_value
 
 class Map:
     map_canvas = Canvas(width = 576, height = 576)
     map_tiles = []
     map_objects = []
-    player_coords = []
-    enemy_coords = []
+    player_object = None
 
     sprites = (
         PhotoImage(file = 'sprites/grass.gif').zoom(3),
@@ -110,34 +205,22 @@ class Map:
 
             for i in range(24):
                 map_string = file.readline()
-                self.map_objects.append([])
 
                 for j in range(24):
-                    if map_string[j] == '*':
-                        self.map_objects[i].append(Object('empty', 'empty'))
+                    if map_string[j] == 'p':
+                        self.player_object = (Player(self.sprites[16], i, j))
                     elif map_string[j] == '1':
-                        self.map_objects[i].append(EnemyLevel1(self.sprites[12], 'enemy_lvl_1'))
-                        self.enemy_coords.append([i, j])
+                        self.map_objects.append(EnemyBlue(self.sprites[12], i, j))
                     elif map_string[j] == '2':
-                        self.map_objects[i].append(EnemyLevel2(self.sprites[13], 'enemy_lvl_2'))
-                        self.enemy_coords.append([i, j])
+                        self.map_objects.append(EnemyGreen(self.sprites[13], i, j))
                     elif map_string[j] == '3':
-                        self.map_objects[i].append(Object(self.sprites[14], 'enemy_lvl_3'))
-                        self.enemy_coords.append([i, j])
+                        self.map_objects.append(EnemyRed(self.sprites[14], i, j))
                     elif map_string[j] == '4':
-                        self.map_objects[i].append(Object(self.sprites[15], 'enemy_lvl_4'))
-                        self.enemy_coords.append([i, j])
-                    elif map_string[j] == 'p':
-                        self.map_objects[i].append(Object(self.sprites[16], 'player'))
-                        self.player_coords = [i, j]
+                        self.map_objects.append(EnemyBoss(self.sprites[15], i, j))
                     elif map_string[j] == 'f':
-                        self.map_objects[i].append(Object(self.sprites[17], 'fire'))
-                    elif map_string[j] == 'c':
-                        self.map_objects[i].append(Object(self.sprites[18], 'chest'))
+                        self.map_objects.append(Fire(self.sprites[17], i, j))
                     elif map_string[j] == 'b':
-                        self.map_objects[i].append(Object(self.sprites[19], 'bandage'))
-                    elif map_string[j] == 's':
-                        self.map_objects[i].append(Object(self.sprites[20], 'star')) 
+                        self.map_objects.append(Bandage(self.sprites[19], i, j))
 
     def Drawing(self):
         self.map_canvas.pack(expand=YES, fill=BOTH)
@@ -147,41 +230,32 @@ class Map:
             for j in range(24):
                 self.map_canvas.create_image(j * 24, i * 24, image = self.map_tiles[i][j].sprite, anchor = NW)
 
-        for i in range(24):
-            for j in range(24):
-                if self.map_objects[i][j].tag != 'empty':
-                    self.map_canvas.create_image(j * 24, i * 24, image = self.map_objects[i][j].sprite, anchor = NW)
+        self.map_canvas.create_image(self.player_object.y_coord * 24, self.player_object.x_coord * 24, image = self.player_object.sprite, anchor = NW)
 
-    def UpdatePlayer(self, direction):
-        pass
-    def UpdateEnemy(self):
-        for i in range(len(self.enemy_coords)):
-            enemy_new_coords = self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]].nextStep(self.enemy_coords[i], self.map_tiles, self.map_objects)
-            
-            if enemy_new_coords == self.player_coords:
-                self.enemy_coords.pop(i)
-                self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]] = Object('empty', 'empty')
-                print('harc')
-            else:
-                tmp_enemy = self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]]
-                self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]] = Object('empty', 'empty')
-                self.map_objects[enemy_new_coords[0]][enemy_new_coords[1]] = tmp_enemy
-                self.enemy_coords[i] = enemy_new_coords
-            
-        self.map_canvas.delete('all')
+        for object in self.map_objects:
+            if object.health > 0:
+                self.map_canvas.create_image(object.y_coord * 24, object.x_coord * 24, image = object.sprite, anchor = NW)
+
+    def Update(self):
+        for object in self.map_objects:
+            object.NextStep(self.map_tiles, self.map_objects, self.player_object)
+
         self.Drawing()
-        self.map_canvas.after(1000, self.UpdateEnemy)
-    
+        map.map_canvas.after(1000, self.Update)
+
 map = Map()
 map.Loading('maps/first_level.txt')
 map.Drawing()
-map.UpdateEnemy()
+map.Update()
 
+def buttonClicked(direction_x, direction_y):
+    map.player_object.NextStep(direction_x, direction_y, map.map_tiles, map.map_objects)
+    map.Drawing()
 
-up_arrow = Button(window, text = "↑", command = lambda:map.UpdatePlayer([-1, 0]), padx = 10, pady = 10)
-down_arrow = Button(window, text = "↓", command = lambda:map.UpdatePlayer([1, 0]), padx = 10, pady = 10)
-left_arrow = Button(window, text = "←", command = lambda:map.UpdatePlayer([0, -1]), padx = 10, pady = 10)
-right_arrow = Button(window, text = "→", command = lambda:map.UpdatePlayer([0, 1]), padx = 10, pady = 10)
+up_arrow = Button(window, text = "↑", command = lambda:buttonClicked(-1, 0), padx = 10, pady = 10)
+down_arrow = Button(window, text = "↓", command = lambda:buttonClicked(1, 0), padx = 10, pady = 10)
+left_arrow = Button(window, text = "←", command = lambda:buttonClicked(0, -1), padx = 10, pady = 10)
+right_arrow = Button(window, text = "→", command = lambda:buttonClicked(0, 1),  padx = 10, pady = 10)
 
 up_arrow.place(x = 0, y = 576)
 down_arrow.place(x = 35, y = 576)
