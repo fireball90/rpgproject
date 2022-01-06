@@ -23,7 +23,7 @@ class EnemyLevel1:
     def nextStep(self, actual_coords, map_tiles, map_objects):
         new_coords = [actual_coords[0], actual_coords[1] + self.step_direction_x]
 
-        if map_tiles[new_coords[0]][new_coords[1]].hitbox or map_objects[new_coords[0]][new_coords[1]] != 'empty':
+        if map_tiles[new_coords[0]][new_coords[1]].hitbox or map_objects[new_coords[0]][new_coords[1]].tag != 'empty':
             self.step_direction_x = -self.step_direction_x
             new_coords = [actual_coords[0], actual_coords[1] + self.step_direction_x]
 
@@ -39,11 +39,10 @@ class EnemyLevel2:
     def nextStep(self, actual_coords, map_tiles, map_objects):
         new_coords = [actual_coords[0] + self.step_direction_y, actual_coords[1]]
 
-        if map_tiles[new_coords[0]][new_coords[1]].hitbox or map_objects[new_coords[0]][new_coords[1]] != 'empty':
+        if map_tiles[new_coords[0]][new_coords[1]].hitbox or map_objects[new_coords[0]][new_coords[1]].tag != 'empty':
             self.step_direction_y = -self.step_direction_y
             new_coords = [actual_coords[0] + self.step_direction_y, actual_coords[1]]
             
-
         return new_coords
 
 class Map:
@@ -115,7 +114,7 @@ class Map:
 
                 for j in range(24):
                     if map_string[j] == '*':
-                        self.map_objects[i].append('empty')
+                        self.map_objects[i].append(Object('empty', 'empty'))
                     elif map_string[j] == '1':
                         self.map_objects[i].append(EnemyLevel1(self.sprites[12], 'enemy_lvl_1'))
                         self.enemy_coords.append([i, j])
@@ -142,6 +141,7 @@ class Map:
 
     def Drawing(self):
         self.map_canvas.pack(expand=YES, fill=BOTH)
+        self.map_canvas.delete('all')
 
         for i in range(24):
             for j in range(24):
@@ -149,38 +149,24 @@ class Map:
 
         for i in range(24):
             for j in range(24):
-                if self.map_objects[i][j] != 'empty':
+                if self.map_objects[i][j].tag != 'empty':
                     self.map_canvas.create_image(j * 24, i * 24, image = self.map_objects[i][j].sprite, anchor = NW)
 
     def UpdatePlayer(self, direction):
-        tag = ''
-        player_new_y = self.player_coords[0] + direction[0]
-        player_new_x = self.player_coords[1] + direction[1]
-
-        if not self.map_tiles[player_new_y][player_new_x].hitbox:
-            if self.map_objects[player_new_y][player_new_x] != 'empty':
-                level = self.map_objects[player_new_y][player_new_x].tag
-            
-            self.map_objects[self.player_coords[0]][self.player_coords[1]] = 'empty'
-            self.map_objects[player_new_y][player_new_x] = Object(self.sprites[16], 5)
-
-            self.map_canvas.delete('all')
-            self.Drawing()
-
-            self.player_coords = [player_new_y, player_new_x]
-
-        return tag
-
+        pass
     def UpdateEnemy(self):
-
         for i in range(len(self.enemy_coords)):
             enemy_new_coords = self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]].nextStep(self.enemy_coords[i], self.map_tiles, self.map_objects)
             
-            tmp_enemy = self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]]
-            self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]] = 'empty'
-            self.map_objects[enemy_new_coords[0]][enemy_new_coords[1]] = tmp_enemy
-
-            self.enemy_coords[i] = enemy_new_coords
+            if enemy_new_coords == self.player_coords:
+                self.enemy_coords.pop(i)
+                self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]] = Object('empty', 'empty')
+                print('harc')
+            else:
+                tmp_enemy = self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]]
+                self.map_objects[self.enemy_coords[i][0]][self.enemy_coords[i][1]] = Object('empty', 'empty')
+                self.map_objects[enemy_new_coords[0]][enemy_new_coords[1]] = tmp_enemy
+                self.enemy_coords[i] = enemy_new_coords
             
         self.map_canvas.delete('all')
         self.Drawing()
