@@ -151,13 +151,6 @@ def openMap():
      command=lambda:[map.Loading(currentlyUsedMap),map.Drawing()])
     buttonwhat.place(x=170,y=120)
 
-def buttonClicked(coords):
-    tag = map.UpdatePlayer(coords)
-
-    if tag == 'enemy_level_1':
-        battlePlay()
-
-
 def showControl():
     clearFrame()
     showbgpls()
@@ -473,7 +466,7 @@ class Map:
         map.map_canvas.after(1000, self.Update)
 
 map = Map()
-map.Loading('maps/first_level.txt')
+map.Loading('maps/second_level.txt')
 map.Drawing()
 map.Update()
 
