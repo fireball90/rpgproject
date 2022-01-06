@@ -425,7 +425,7 @@ class Map:
         fightText.insert(END, combat)
 
 map = Map()
-map.Loading('maps/first_level.txt')
+map.Loading('maps/third_level.txt')
 map.Drawing()
 map.UpdateEnemy()
 

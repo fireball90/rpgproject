@@ -5,7 +5,7 @@ from tkinter import font
 
 def openFile():
     tf = filedialog.askopenfilename(
-        initialdir="/level", 
+        initialdir="/maps", 
         title="Open Text file", 
         filetypes=(("Text Files", "*.txt"),)
         )
@@ -120,7 +120,7 @@ workOrder6.place(x=10,y=685)
 workOrder7.place(x=10,y=720)
 
 mapFrame = Frame(mapTextFrame, width=400)
-mapFrame.pack(pady=20,padx=100)
+mapFrame.pack(pady=5,padx=100)
 
 mapText = Text(mapFrame, width=24, height=48)
 mapText.pack(side=LEFT)
