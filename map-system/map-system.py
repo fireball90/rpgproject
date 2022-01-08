@@ -127,6 +127,14 @@ class EnemyRed:
             self.turn = not self.turn
             self.step_counter = 3 - self.step_counter
 
+        for object in map_objects:
+            if object.x_coord == self.x_coord + self.step_direction_x and object.y_coord == self.y_coord + self.step_direction_y and object.hitbox:
+                self.step_direction_x = -self.step_direction_x
+                self.step_direction_y = -self.step_direction_y
+
+                self.turn = not self.turn
+                self.step_counter = 3 - self.step_counter
+
         self.x_coord += self.step_direction_x
         self.y_coord += self.step_direction_y
 
@@ -288,7 +296,7 @@ class Map:
         map.map_canvas.after(800, self.Update)
 
 map = Map()
-map.Loading('maps/third_level.txt')
+map.Loading('maps/first_level.txt')
 map.Drawing()
 map.Update()
 
