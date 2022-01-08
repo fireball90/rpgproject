@@ -29,6 +29,7 @@ class Player:
         for object in map_objects:
             if object.x_coord == self.x_coord and object.y_coord == self.y_coord:
                 object.UpdateHealth(self.damage)
+                object.hitbox = False
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -57,6 +58,7 @@ class EnemyBlue:
 
         if player_object.x_coord == self.x_coord and player_object.y_coord == self.y_coord:
             self.UpdateHealth(player_object.damage)
+            self.hitbox = False
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -85,6 +87,7 @@ class EnemyGreen:
 
         if player_object.x_coord == self.x_coord and player_object.y_coord == self.y_coord:
             self.UpdateHealth(player_object.damage)
+            self.hitbox = False
 
     def UpdateHealth(self, update_value):
         self.health += update_value

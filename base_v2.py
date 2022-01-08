@@ -251,6 +251,7 @@ class Player:
         for object in map_objects:
             if object.x_coord == self.x_coord and object.y_coord == self.y_coord:
                 object.UpdateHealth(self.damage)
+                object.hitbox = False
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -279,6 +280,7 @@ class EnemyBlue:
 
         if player_object.x_coord == self.x_coord and player_object.y_coord == self.y_coord:
             self.UpdateHealth(player_object.damage)
+            self.hitbox = False
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -307,6 +309,7 @@ class EnemyGreen:
 
         if player_object.x_coord == self.x_coord and player_object.y_coord == self.y_coord:
             self.UpdateHealth(player_object.damage)
+            self.hitbox = False
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -349,6 +352,14 @@ class EnemyRed:
             self.turn = not self.turn
             self.step_counter = 3 - self.step_counter
 
+        for object in map_objects:
+            if object.x_coord == self.x_coord + self.step_direction_x and object.y_coord == self.y_coord + self.step_direction_y and object.hitbox:
+                self.step_direction_x = -self.step_direction_x
+                self.step_direction_y = -self.step_direction_y
+
+                self.turn = not self.turn
+                self.step_counter = 3 - self.step_counter
+
         self.x_coord += self.step_direction_x
         self.y_coord += self.step_direction_y
 
@@ -357,7 +368,6 @@ class EnemyRed:
 
     def UpdateHealth(self, update_value):
         self.health += update_value
-
 
 class EnemyBoss:
     def __init__(self, sprite, x_coord, y_coord):
@@ -507,10 +517,11 @@ class Map:
 
     def Update(self):
         for object in self.map_objects:
-            object.NextStep(self.map_tiles, self.map_objects, self.player_object)
+            if object.health > 0:
+                object.NextStep(self.map_tiles, self.map_objects, self.player_object)
 
         self.Drawing()
-        map.map_canvas.after(1000, self.Update)
+        map.map_canvas.after(800, self.Update)
 
 map = Map()
 map.Loading('maps/first_level.txt')
