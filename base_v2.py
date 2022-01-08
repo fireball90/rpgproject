@@ -293,8 +293,20 @@ class EnemyGreen:
         self.health = 120
         self.hitbox = True
 
+    step_direction_y = 1
+
     def NextStep(self, map_tiles, map_objects, player_object):
-        pass
+        if map_tiles[self.x_coord][self.y_coord + self.step_direction_y].hitbox:
+            self.step_direction_y = -self.step_direction_y
+        
+        for object in map_objects:
+            if object.x_coord == self.x_coord and object.y_coord == self.y_coord + self.step_direction_y and object.hitbox:
+                self.step_direction_y = -self.step_direction_y
+        
+        self.y_coord += self.step_direction_y
+
+        if player_object.x_coord == self.x_coord and player_object.y_coord == self.y_coord:
+            self.UpdateHealth(player_object.damage)
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -309,8 +321,25 @@ class EnemyRed:
         self.health = 140
         self.hitbox = True
 
+    step_direction_x = 1
+    step_direction_y = 0
+    step_counter = 0
+
     def NextStep(self, map_tiles, map_objects, player_object):
-        pass
+        self.step_counter += 1
+
+        if self.step_counter > 3:
+            tmp = -self.step_direction_x
+            self.step_direction_x = self.step_direction_y
+            self.step_direction_y = tmp
+            self.step_counter = 0
+
+        self.x_coord += self.step_direction_x
+        self.y_coord += self.step_direction_y
+
+        if player_object.x_coord == self.x_coord and player_object.y_coord == self.y_coord:
+            self.UpdateHealth(player_object.damage)
+        
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -394,6 +423,9 @@ class Map:
     )
 
     def Loading(self, map_name):
+        self.map_tiles.clear()
+        self.map_objects.clear()
+
         with open(map_name, 'r', encoding = 'utf-8') as file:
             for i in range(24):
                 map_string = file.readline()
@@ -466,7 +498,7 @@ class Map:
         map.map_canvas.after(1000, self.Update)
 
 map = Map()
-map.Loading('maps/second_level.txt')
+map.Loading('maps/first_level.txt')
 map.Drawing()
 map.Update()
 
