@@ -4,6 +4,7 @@ from tkinter import filedialog
 from tkinter import font
 
 def openFile():
+    mapText.delete("1.0","end")
     tf = filedialog.askopenfilename(
         initialdir="/maps", 
         title="Open Text file", 
@@ -21,9 +22,8 @@ def saveFile():
         title ="Save file",
         defaultextension=".txt"
         )
-    tf.config(mode='w')
     mapPath.insert(END, tf)
-    data = str(mapText.get(1.0, END))
+    data = str(mapText.get("1.0", "end"))
     tf.write(data)
     tf.close()
 
