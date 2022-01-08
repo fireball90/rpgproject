@@ -324,25 +324,40 @@ class EnemyRed:
     step_direction_x = 1
     step_direction_y = 0
     step_counter = 0
+    turn = 1
 
     def NextStep(self, map_tiles, map_objects, player_object):
         self.step_counter += 1
 
-        if self.step_counter > 3:
-            tmp = -self.step_direction_x
-            self.step_direction_x = self.step_direction_y
+        if self.step_counter > 2 and self.turn:
+            tmp = self.step_direction_x
+            self.step_direction_x = -self.step_direction_y
             self.step_direction_y = tmp
+
             self.step_counter = 0
+        elif self.step_counter > 2 and self.turn == 0:
+            tmp = self.step_direction_x
+            self.step_direction_x = self.step_direction_y
+            self.step_direction_y = -tmp
+
+            self.step_counter = 0
+
+        if map_tiles[self.x_coord + self.step_direction_x][self.y_coord + self.step_direction_y].hitbox:
+            self.step_direction_x = -self.step_direction_x
+            self.step_direction_y = -self.step_direction_y
+
+            self.turn = not self.turn
+            self.step_counter = 3 - self.step_counter
 
         self.x_coord += self.step_direction_x
         self.y_coord += self.step_direction_y
 
         if player_object.x_coord == self.x_coord and player_object.y_coord == self.y_coord:
             self.UpdateHealth(player_object.damage)
-        
 
     def UpdateHealth(self, update_value):
         self.health += update_value
+
 
 class EnemyBoss:
     def __init__(self, sprite, x_coord, y_coord):
