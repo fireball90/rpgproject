@@ -9,9 +9,16 @@ import random
 import combat
 import enemy    
 
+
+
+
 root = tk.Tk()
 root.geometry("600x900")
 root.resizable(False, False)
+
+#combat units
+player = combat.playerStats(10,100,0)
+enemyMob = enemy.basicEnemy()
 
 def drawBattleBG():
     attackBG = tk.Canvas(battleStatus,width=600,height=600)
@@ -26,26 +33,71 @@ def drawBattleBG():
 def clearLabel():
     attackBG.delete("all")
 
-def attackBtn():
-    enemy.health, ultimateBar, combatLog = combat.playerAttack(damage,enemy.health,ultimateBar)
-    attackLabel=tk.Label(battleStatus, textvariable=combat.playerAttackText(combatLog))
-    attackLabel.place(x=200,y=200)
-
-def defenseBtn():
-    enemy.playerDef, ultimateBar = combat.playerDef(enemy.playerDef,ultimateBar)
-    defenseLabel=tk.Label(battleStatus, text="You defend")
-    defenseLabel.place(x=200,y=260)
-
-def ultimateBtn():
-    enemy.health, ultimateBar, enemy.stunBool, combatLog = combat.playerUltimate(damage,enemy.health,ultimateBar,enemy.stunBool)
-    ultimateLabel=tk.Label(battleStatus, textvariable=combat.playerAttackText(combatLog))
-    ultimateLabel.place(x=200,y=320)
 
 #gombok
 
 btnAttack=tk.PhotoImage(file="images/buttonattack.gif")
 btnDefend=tk.PhotoImage(file="images/buttondefend.gif")
 btnUltimate=tk.PhotoImage(file="images/buttonultimate.gif")
+
+#gomb függvények
+def attackButton():
+    global player,enemyMob
+    combatLog = 0
+    enemyMob.health, player.ultimateBar, combatLog = combat.playerAttack(player.playerDamage, enemyMob.health, player.ultimateBar, enemyMob.damageReduction)
+    enemyCombatText.config(text = combat.playerAttackText(combatLog,enemyMob.unitName))
+    if enemyMob.health>0:
+        player.playerHealth, enemyMob.stunBool, combatLog, enemyMob.playerDef, enemyMob.damageReduction, enemyMob.damage = enemyMob.notRlyAI(player.playerHealth)
+        playerCombatText.config(text = combat.enemyAttackText(combatLog))
+        enemyHP.config(text = enemyMob.health)
+    else:
+        playerCombatText.config(text = "{} is dead!".format(enemyMob.unitName))
+        enemyHP.config(text = "DEAD")
+    playerHP.config(text = player.playerHealth)
+    ultimate.config(text = player.ultimateBar)
+    combatEndTest()
+
+def defendButton():
+    global player,enemyMob
+    combatLog = 0
+    enemyMob.playerDef, player.ultimateBar = combat.playerDef(enemyMob.playerDef,player.ultimateBar)
+    enemyCombatText.config(text = "You defend")
+    player.playerHealth, enemyMob.stunBool, combatLog, enemyMob.playerDef, enemyMob.damageReduction, enemyMob.damage = enemyMob.notRlyAI(player.playerHealth)
+    playerCombatText.config(text = combat.enemyAttackText(combatLog))
+    playerHP.config(text = player.playerHealth)
+    ultimate.config(text = player.ultimateBar)
+    combatEndTest()
+
+
+def ultimateButton():
+    global player,enemyMob
+    combatLog = 0
+    if player.ultimateBar==100:
+        enemyMob.health, player.ultimateBar, combatLog = combat.playerAttack(player.playerDamage, enemyMob.health, player.ultimateBar, enemyMob.damageReduction)
+        enemyCombatText.config(text = combat.playerAttackText(combatLog,enemyMob.unitName))
+        if enemyMob.health>0:
+            enemyMob.health, player.ultimateBar, enemyMob.stunBool, combatLog = combat.playerUltimate(player.playerDamage,enemyMob.health,player.ultimateBar,enemyMob.stunBool,enemyMob.damageReduction)
+            playerCombatText.config(text = combat.enemyAttackText(combatLog))
+            enemyHP.config(text = enemyMob.health)
+        else:
+            playerCombatText.config(text = "{} is dead!".format(enemyMob.unitName))
+            enemyHP.config(text = "DEAD")
+        playerHP.config(text = player.playerHealth)
+        ultimate.config(text = player.ultimateBar)
+
+    combatEndTest()
+
+def defendButton():
+    global player,enemyMob
+    combatLog = 0
+    enemyMob.playerDef, player.ultimateBar = combat.playerDef(enemyMob.playerDef,player.ultimateBar)
+    enemyCombatText.config(text = "You defend")
+    player.playerHealth, enemyMob.stunBool, combatLog, enemyMob.playerDef, enemyMob.damageReduction, enemyMob.damage = enemyMob.notRlyAI(player.playerHealth)
+    playerCombatText.config(text = combat.enemyAttackText(combatLog))
+    playerHP.config(text = player.playerHealth)
+    ultimate.config(text = player.ultimateBar)
+    combatEndTest()  
+
 
 
 battleName = tk.Frame(root, background="#111111", height=25)
@@ -90,47 +142,67 @@ def update():
     fightLabel = tk.Label(battleStatus, text=testvar, font=("Arial", 16), background="#BBBBBB", fg="red")
     fightLabel.place(x=220,y=20)
 
-attackBTN=tk.Button(battleControl,border="0",image=btnAttack, text="Attack", fg="Yellow", bg="#555555", font=("Arial",20), command=update)
-attackBTN.place(x=40,y=100)
-defendBTN=tk.Button(battleControl,border="0",image=btnDefend, text="Defend", fg="Yellow", bg="#555555", font=("Arial",20), command=defenseBtn)
-defendBTN.place(x=230,y=100)
-ultimateBTN=tk.Button(battleControl,border="0",image=btnUltimate, text="Ultimate", fg="Yellow", bg="#555555", font=("Arial",20), command=ultimateBtn)
-ultimateBTN.place(x=430,y=100)
+
+
 
 fightLabel = tk.Label(battleStatus, text=testvar, font=("Arial", 16), background="#BBBBBB", fg="red")
 fightLabel.place(x=220,y=20)
 
+enemyName=tk.Label(battleStatus, text=enemyMob.unitName, bg="red")
+enemyName.place(x=120,y=120)
+
+enemyCombatText=tk.Label(battleStatus, text="", bg="red")
+enemyCombatText.place(x=120,y=220)
+playerCombatText=tk.Label(battleStatus, text="", bg="red")
+playerCombatText.place(x=120,y=260)
 combatLog = 0
-playerHealth = 100
-damage = 10
-ultimateBar = 0
-enemy = enemy.basicEnemy()
+
+enemyHP=tk.Label(battleStatus, text=enemyMob.health, bg="red",font=("Arial", 16))
+enemyHP.place(x=120,y=140)
+playerHP=tk.Label(battleStatus, text=player.playerHealth, bg = "#41A317")
+playerHP.place(x=360,y=400)
+ultimate=tk.Label(battleStatus, text=player.ultimateBar, bg = "cyan")
+ultimate.place(x=360,y=420)
+#playerHealth, enemy.stunBool, combatLog = enemy.notRlyAI(playerHealth)
+combatLabel=tk.Label(battleStatus, text=combat.enemyAttackText(combatLog))
+
+attackBTN=tk.Button(battleControl,border="0",image=btnAttack, text="Attack", fg="Yellow", bg="#555555", font=("Arial",20), command=attackButton)
+attackBTN.place(x=40,y=100)
+defendBTN=tk.Button(battleControl,border="0",image=btnDefend, text="Defend", fg="Yellow", bg="#555555", font=("Arial",20), command=defendButton)
+defendBTN.place(x=230,y=100)
+ultimateBTN=tk.Button(battleControl,border="0",image=btnUltimate, text="Ultimate", fg="Yellow", bg="#555555", font=("Arial",20), command=ultimateButton)
+ultimateBTN.place(x=430,y=100)
+
+def exitButton():
+    if player.playerHealth<=0:
+        with open('battle.txt', 'a') as f:
+            f.writelines('\n')
+        root.destroy()
+        import gameover
+    else:
+        with open('battle.txt', 'a') as f:
+            f.writelines('\n')
+        root.destroy()
+
+def combatEndTest():
+    if player.playerHealth<=0:
+        loseLabel=tk.Label(battleStatus, text="You lose")
+        loseLabel.place(x=200,y=150)
+        attackBTN.destroy()
+        defendBTN.destroy()
+        ultimateBTN.destroy()
+        exitBTN = tk.Button(battleControl,border="0",text="OK",fg="Yellow", bg="#555555", font=("Arial",20), command=exitButton)
+        exitBTN.place(x=230,y=100)
+    elif enemyMob.health<=0:
+        winLabel=tk.Label(battleStatus, text="You win",fg="Yellow", bg="#555555", font=("Arial",20))
+        winLabel.place(x=200,y=150)
+        attackBTN.destroy()
+        defendBTN.destroy()
+        ultimateBTN.destroy()
+        exitBTN = tk.Button(battleControl,border="0",text="OK",fg="Yellow", bg="#555555", font=("Arial",20), command=exitButton)
+        exitBTN.place(x=230,y=100)
 
 
-enemyName=tk.Label(battleStatus, textvariable=str(enemy))
-enemyName.place(x=100,y=80)
-
-
-enemyHP=tk.Label(battleStatus, textvariable=enemy.health)
-enemyHP.place(x=100,y=100)
-playerHP=tk.Label(battleStatus, textvariable="Your health: {}".format(playerHealth))
-playerHP.place(x=100,y=120)
-ultimate=tk.Label(battleStatus, textvariable="Ultimate: {}%".format(ultimateBar))
-enemyHP.place(x=100,y=120)
-playerHealth, enemy.stunBool, combatLog = enemy.notRlyAI(playerHealth)
-combatLabel=tk.Label(battleStatus, textvariable=combat.enemyAttackText(combatLog))
-if playerHealth<=0:
-    clearLabel()
-    drawBattleBG()
-    loseLabel=tk.Label(battleStatus, textvariable="You lose")
-    loseLabel.place(x=200,y=150)
-elif enemy.health<=0:
-    clearLabel()
-    drawBattleBG()
-    winLabel=tk.Label(battleStatus, textvariable="You win")
-    winLabel.place(x=200,y=150)
-with open('battle.txt', 'a') as f:
-    f.writelines('\n')
 
 
 

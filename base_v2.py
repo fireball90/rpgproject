@@ -7,7 +7,6 @@ from PIL import Image, ImageTk
 import os
 from tkinter import filedialog
 import sys
-import combat
 import enemy
 import random
 
@@ -238,6 +237,7 @@ class Player:
         self.name = 'Player'
         self.damage = -200
         self.health = 100
+        self.ultimate = 0
         self.hitbox = False
 
     def NextStep(self, direction_x, direction_y, map_tiles, map_objects):
@@ -252,6 +252,7 @@ class Player:
             if object.x_coord == self.x_coord and object.y_coord == self.y_coord:
                 object.UpdateHealth(self.damage)
                 object.hitbox = False
+                self.UpdateHealth(object.damage)
 
     def UpdateHealth(self, update_value):
         self.health += update_value
@@ -422,6 +423,7 @@ class Map:
     map_tiles = []
     map_objects = []
     player_object = None
+    update = True
 
     sprites = (
         PhotoImage(file = 'sprites/grass.gif').zoom(3),
@@ -521,7 +523,10 @@ class Map:
                 object.NextStep(self.map_tiles, self.map_objects, self.player_object)
 
         self.Drawing()
-        map.map_canvas.after(800, self.Update)
+        if self.update:
+            map.map_canvas.after(1000, self.Update)
+
+
 
 map = Map()
 map.Loading('maps/first_level.txt')

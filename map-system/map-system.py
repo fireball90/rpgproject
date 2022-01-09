@@ -200,6 +200,7 @@ class Map:
     map_tiles = []
     map_objects = []
     player_object = None
+    update = False
 
     sprites = (
         PhotoImage(file = 'sprites/grass.gif').zoom(3),
@@ -279,6 +280,7 @@ class Map:
     def Drawing(self):
         self.map_canvas.pack(expand=YES, fill=BOTH)
         self.map_canvas.delete('all')
+        self.update = True
 
         for i in range(24):
             for j in range(24):
@@ -296,7 +298,12 @@ class Map:
                 object.NextStep(self.map_tiles, self.map_objects, self.player_object)
 
         self.Drawing()
-        map.map_canvas.after(800, self.Update)
+        if self.update:
+            map.map_canvas.after(800, self.Update)
+
+    def Delete(self):
+        self.map_canvas.delete('all')
+        self.update = False
 
 map = Map()
 map.Loading('maps/first_level.txt')

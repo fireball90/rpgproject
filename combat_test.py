@@ -4,35 +4,57 @@ import enemy
 import tkinter
 import tkinter as tk
 
-combatLog = 0
-playerHealth = 100
-damage = 10
-ultimateBar = 0
-enemy = enemy.basicEnemy()
-
+player = combat.playerStats(10,100,0)
+print(str(player.playerDamage)+ " " + str(player.playerHealth))
+enemyMob = enemy.basicEnemy()
+while 1:
+    enemySelect = input("Select enemy: Basic enemy: q, Defender enemy: d, Berserker enemy: b:")
+    if enemySelect == "q":
+        enemyMob = enemy.basicEnemy()
+        break
+    elif enemySelect == "d":
+        enemyMob = enemy.defenderEnemy()
+        break
+    elif enemySelect == "b":
+        enemyMob = enemy.berserkerEnemy()
+        break
+print(enemyMob.unitName)
+attackBool = False
 print(str(enemy))
 while 1:
-    print("Enemy health: {}".format(enemy.health))
-    print("Your health: {}".format(playerHealth))
-    print("Ultimate: {}%".format(ultimateBar))
-    choice = input("Your action! Attack: a , Defend , d , Ultimate u :")
+    if attackBool == False:
+        choice = input("Your action! Attack: a , Defend , d , Ultimate u :")
+    else:
+        attackBool = False
+        print("Enemy health: {}".format(enemyMob.health))
+        print("Your health: {}".format(player.playerHealth))
+        print("Ultimate: {}%".format(player.ultimateBar))
+        choice = input("Your action! Attack: a , Defend , d , Ultimate u :")
+    
     if choice == "a".lower():
-        enemy.health, ultimateBar, combatLog = combat.playerAttack(damage,enemy.health,ultimateBar)
-        print(combat.playerAttackText(combatLog))
+        enemyMob.health, player.ultimateBar, combatLog = combat.playerAttack(player.playerDamage, enemyMob.health, player.ultimateBar, enemyMob.damageReduction)
+        print(combat.playerAttackText(combatLog,enemyMob.unitName))
+        attackBool = True
     if choice == "d".lower():
-        enemy.playerDef, ultimateBar = combat.playerDef(enemy.playerDef,ultimateBar)
-        print("You defend")      
+        enemyMob.playerDef, player.ultimateBar = combat.playerDef(enemyMob.playerDef,player.ultimateBar)
+        print("You defend")
+        attackBool = True      
     if choice == "u".lower():
-        enemy.health, ultimateBar, enemy.stunBool, combatLog = combat.playerUltimate(damage,enemy.health,ultimateBar,enemy.stunBool)
-        print(combat.playerAttackText(combatLog))
-    playerHealth, enemy.stunBool, combatLog = enemy.notRlyAI(playerHealth)
-    print(combat.enemyAttackText(combatLog))
-    if playerHealth<=0:
+        if player.ultimateBar < 100:
+            print("Need 100% to use that!")
+        else:
+            enemyMob.health, player.ultimateBar, enemyMob.stunBool, combatLog = combat.playerUltimate(player.playerDamage,enemyMob.health,player.ultimateBar,enemyMob.stunBool,enemyMob.damageReduction)
+            print(combat.playerAttackText(combatLog,enemyMob.unitName))
+            attackBool = True
+    if attackBool == True and enemyMob.health>0:
+        player.playerHealth, enemyMob.stunBool, combatLog, enemyMob.playerDef, enemyMob.damageReduction, enemyMob.damage = enemyMob.notRlyAI(player.playerHealth)
+        print(combat.enemyAttackText(combatLog))
+    if player.playerHealth<=0:
         print("You lose")
         break
-    elif enemy.health<=0:
+    elif enemyMob.health<=0:
         print("You win")
         break
-    with open('battle.txt', 'a') as f:
-        f.writelines('\n')
+    #with open('battle.txt', 'a') as f:
+        #f.writelines('\n')
     
